@@ -47,6 +47,11 @@ class Produk extends Model
         return $this->hasMany(ProdukKomponen::class);
     }
 
+    public function biayaProduk()
+    {
+        return $this->hasOne(BiayaProduk::class);
+    }
+
     /**
      * Hitung harga berdasarkan komponen untuk ukuran tertentu
      */
@@ -92,5 +97,41 @@ class Produk extends Model
         ];
 
         return $multipliers[strtoupper($ukuran)] ?? 1.0;
+    }
+
+    /**
+     * Get harga berdasarkan ukuran dan tipe harga
+     */
+    public function getHargaByTipe($ukuran, $tipe = 1)
+    {
+        if (!$this->biayaProduk) {
+            return 0;
+        }
+
+        return $this->biayaProduk->getHarga($ukuran, $tipe);
+    }
+
+    /**
+     * Get semua harga untuk produk ini dalam format matrix
+     */
+    public function getAllHargaMatrix()
+    {
+        if (!$this->biayaProduk) {
+            return [];
+        }
+
+        return $this->biayaProduk->getAllHargaMatrix();
+    }
+
+    /**
+     * Update semua tipe harga untuk produk ini
+     */
+    public function updateAllTipeHarga()
+    {
+        if ($this->biayaProduk) {
+            return $this->biayaProduk->updateAllTipeHarga();
+        }
+        
+        return null;
     }
 }

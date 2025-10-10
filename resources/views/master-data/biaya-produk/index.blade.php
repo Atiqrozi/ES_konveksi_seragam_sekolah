@@ -29,6 +29,7 @@
                                             <button
                                                 type="submit"
                                                 class="button button-primary"
+                                                style="background-color: #800000 !important; color: white !important; border-color: #800000 !important;"
                                             >
                                                 <i class="icon ion-md-search"></i>
                                             </button>
@@ -41,6 +42,7 @@
                                 <a
                                     href="{{ route('biaya-produk.create') }}"
                                     class="button button-primary"
+                                    style="background-color: #800000 !important; color: white !important; border-color: #800000 !important;"
                                 >
                                     <i class="mr-1 icon ion-md-add"></i>
                                     Tambah Biaya Produk
@@ -137,7 +139,7 @@
                                                 </button>
                                             </a>
                                             <a
-                                                href="{{ route('biaya-produk.edit', $produk) }}"
+                                                href="{{ $produk->biayaProduk ? route('biaya-produk.edit', $produk->biayaProduk->total_biaya_komponen) : route('biaya-produk.create', ['produk_id' => $produk->id]) }}"
                                                 class="mr-1"
                                             >
                                                 <button type="button" class="button">

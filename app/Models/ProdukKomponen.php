@@ -14,11 +14,15 @@ class ProdukKomponen extends Model
         'produk_id',
         'komponen_id',
         'ukuran',
-        'quantity'
+        'quantity',
+        'harga_per_unit',
+        'total_harga'
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
+        'harga_per_unit' => 'decimal:2',
+        'total_harga' => 'decimal:2',
     ];
 
     /**

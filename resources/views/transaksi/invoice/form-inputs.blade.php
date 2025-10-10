@@ -169,38 +169,91 @@
         const produkId = produkSelect.value;
         const ukuran = group.querySelector('.ukuran-select').value;
 
+        console.log('Populate harga - produkId:', produkId, 'ukuran:', ukuran, 'tipeHarga:', globalTipeHarga);
+
         if (!produkId || !ukuran || !globalTipeHarga) {
             hargaInput.value = '';
+            console.log('Salah satu parameter kosong, mengosongkan harga');
             return;
         }
 
         const prices = @json($pricesByProduct);
+        console.log('Prices data:', prices);
+        
         const productPrices = prices[produkId] || {};
-        const harga = productPrices[ukuran] ? productPrices[ukuran][globalTipeHarga] : '';
+        console.log('Product prices for produkId', produkId, ':', productPrices);
+        
+        const sizePrice = productPrices[ukuran];
+        console.log('Size price for ukuran', ukuran, ':', sizePrice);
+        
+        const harga = sizePrice ? sizePrice[globalTipeHarga] : 0;
+        console.log('Final harga:', harga);
 
-        hargaInput.value = harga ? formatCurrency(harga) : '';
+        if (harga && harga > 0) {
+            hargaInput.value = formatCurrency(harga);
+            console.log('Harga formatted:', formatCurrency(harga));
+        } else {
+            hargaInput.value = '';
+            console.log('Harga kosong atau 0');
+        }
+        
         calculateTotal(selectElement);
     }
 
     function calculateTotal(element) {
         const group = element.closest('.produk-group');
-        const harga = parseFloat(group.querySelector('.harga-input').value.replace(/[^0-9]/g, '')) || 0;
-        const jumlah = parseFloat(group.querySelector('input[name="jumlah_pesanan[]"]').value) || 0;
+        const hargaInput = group.querySelector('.harga-input');
+        const jumlahInput = group.querySelector('input[name="jumlah_pesanan[]"]');
+        const totalInput = group.querySelector('input[name="total[]"]');
 
-        const total = harga * jumlah;
-        group.querySelector('input[name="total[]"]').value = formatCurrency(total);
+        // Ambil harga dari input (hilangkan format currency)
+        const hargaRaw = hargaInput.value.replace(/[^0-9]/g, '');
+        const harga = parseFloat(hargaRaw) || 0;
+        
+        // Ambil jumlah
+        const jumlah = parseFloat(jumlahInput.value) || 0;
+
+        console.log('Calculate total - harga:', harga, 'jumlah:', jumlah);
+
+        if (harga > 0 && jumlah > 0) {
+            const total = harga * jumlah;
+            totalInput.value = formatCurrency(total);
+            console.log('Total calculated:', total, 'formatted:', formatCurrency(total));
+        } else {
+            totalInput.value = '';
+            console.log('Total kosong karena harga atau jumlah 0');
+        }
+        
         updateSubtotal();
     }
 
     function updateSubtotal() {
-        const subtotal = Array.from(document.querySelectorAll('input[name="total[]"]')).reduce((sum, input) => {
-            return sum + (parseFloat(input.value.replace(/[^0-9]/g, '')) || 0);
-        }, 0);
-        document.getElementById('subtotal').value = formatCurrency(subtotal);
+        const totalInputs = document.querySelectorAll('input[name="total[]"]');
+        let subtotal = 0;
+        
+        totalInputs.forEach(input => {
+            const value = input.value.replace(/[^0-9]/g, '');
+            const amount = parseFloat(value) || 0;
+            subtotal += amount;
+            console.log('Subtotal item:', amount, 'running subtotal:', subtotal);
+        });
+        
+        const subtotalInput = document.getElementById('subtotal');
+        subtotalInput.value = formatCurrency(subtotal);
+        
+        console.log('Final subtotal:', subtotal, 'formatted:', formatCurrency(subtotal));
     }
 
     function formatCurrency(value) {
-        return Number(value).toLocaleString('id-ID', { minimumFractionDigits: 0 });
+        // Pastikan value adalah number
+        const number = Number(value);
+        if (isNaN(number)) return '';
+        
+        // Format dengan separator ribuan untuk rupiah Indonesia
+        return number.toLocaleString('id-ID', { 
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
     }
 
     function addProduk() {
@@ -208,11 +261,45 @@
         const lastGroup = container.querySelector('.produk-group:last-child');
         const newGroup = lastGroup.cloneNode(true);
 
-        newGroup.querySelectorAll('input').forEach(input => input.value = '');
-        newGroup.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        // Reset semua input dan select
+        newGroup.querySelectorAll('input').forEach(input => {
+            input.value = '';
+        });
+        
+        newGroup.querySelectorAll('select').forEach(select => {
+            select.selectedIndex = 0;
+        });
+
+        // Reset ukuran dropdown
+        const ukuranSelect = newGroup.querySelector('.ukuran-select');
+        ukuranSelect.innerHTML = '<option disabled selected>Ukuran</option>';
+
+        // Tambahkan event listener untuk elemen baru
+        const jumlahInput = newGroup.querySelector('input[name="jumlah_pesanan[]"]');
+        if (jumlahInput) {
+            jumlahInput.addEventListener('input', function() {
+                calculateTotal(this);
+            });
+        }
+
+        const produkSelect = newGroup.querySelector('select[name="produk_id[]"]');
+        if (produkSelect) {
+            produkSelect.addEventListener('change', function() {
+                populateUkuran(this);
+            });
+        }
+
+        const ukuranSelectNew = newGroup.querySelector('.ukuran-select');
+        if (ukuranSelectNew) {
+            ukuranSelectNew.addEventListener('change', function() {
+                populateHarga(this);
+            });
+        }
 
         container.appendChild(newGroup);
         updateNumbering();
+        
+        console.log('Produk baru ditambahkan');
     }
 
     function deleteProduk(button) {
@@ -229,11 +316,38 @@
     }
 
     function updateAllPrices() {
+        console.log('Updating all prices...');
         document.querySelectorAll('.produk-group').forEach(group => {
             const ukuranSelect = group.querySelector('.ukuran-select');
-            if (ukuranSelect.value) {
+            if (ukuranSelect.value && ukuranSelect.value !== 'Ukuran') {
                 populateHarga(ukuranSelect);
             }
         });
     }
+
+    // Initialize form ketika halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Form initialized');
+        
+        // Event listener untuk tipe harga global
+        const globalTipeHarga = document.getElementById('global-tipe-harga');
+        if (globalTipeHarga) {
+            globalTipeHarga.addEventListener('change', function() {
+                console.log('Global tipe harga changed to:', this.value);
+                updateAllPrices();
+            });
+        }
+
+        // Event listener untuk produk grup yang sudah ada
+        document.querySelectorAll('.produk-group').forEach(group => {
+            const jumlahInput = group.querySelector('input[name="jumlah_pesanan[]"]');
+            if (jumlahInput) {
+                jumlahInput.addEventListener('input', function() {
+                    calculateTotal(this);
+                });
+            }
+        });
+
+        console.log('Event listeners initialized');
+    });
 </script>

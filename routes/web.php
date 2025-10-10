@@ -192,7 +192,7 @@ Route::prefix('/')
         Route::resource('komponen', KomponenController::class);
         
         // Routes untuk fitur biaya - Biaya Produk
-        Route::resource('biaya-produk', BiayaProdukController::class);
+        Route::resource('biaya-produk', BiayaProdukController::class)->parameters(['biaya-produk' => 'total_harga']);
         Route::delete('/biaya-produk/{produk}/remove-komponen/{komponen}', [BiayaProdukController::class, 'removeKomponen'])->name('biaya-produk.remove-komponen');
         Route::get('/biaya-produk/{produk}/manage-komponen', [BiayaProdukController::class, 'manageKomponen'])->name('biaya-produk.manage-komponen');
         Route::post('/biaya-produk/{produk}/store-komponen', [BiayaProdukController::class, 'storeKomponen'])->name('biaya-produk.store-komponen');

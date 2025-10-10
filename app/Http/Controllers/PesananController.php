@@ -117,9 +117,11 @@ class PesananController extends Controller
         $this->authorize('create', Invoice::class);
 
         $produks = Produk::pluck('nama_produk', 'id');
-        $ukuran_produks = UkuranProduk::all()->groupBy('produk_id');
         $users = User::role('Sales')->pluck('nama', 'id');
         $create = 'create';
+        
+        // Get harga data dari UkuranProduk (bukan BiayaProduk)
+        $ukuran_produks = UkuranProduk::all()->groupBy('produk_id');
 
         return view('transaksi.invoice.create', compact('produks', 'create', 'users', 'ukuran_produks'));
     }

@@ -131,8 +131,9 @@
                                                 </button>
                                             </a>
                                         @endcan
+
                                         @can('delete', $produk)
-                                            <form id="deleteForm" action="{{ route('produks.destroy', $produk->id) }}" method="POST">
+                                            <form id="deleteForm{{ $produk->id }}" action="{{ route('produks.destroy', $produk->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
@@ -147,7 +148,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" style="display: table-cell; text-align: center; vertical-align: middle;">
+                                <td colspan="6" style="display: table-cell; text-align: center; vertical-align: middle;">
                                     No produk Found
                                 </td>
                             </tr>
@@ -155,7 +156,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5">
+                                <td colspan="6">
                                     <div class="mt-10 px-4">
                                         {!! $produks->render() !!}
                                     </div>
@@ -182,8 +183,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika konfirmasi, submit formulir secara manual
-                    document.getElementById('deleteForm').action = '{{ route('produks.destroy', '') }}/' + produkId;
-                    document.getElementById('deleteForm').submit();
+                    document.getElementById('deleteForm' + produkId).submit();
                 }
             });
         }

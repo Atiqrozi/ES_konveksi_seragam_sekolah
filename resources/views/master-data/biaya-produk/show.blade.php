@@ -25,7 +25,7 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Nama Produk</label>
-                                        <p class="mt-1 text-sm text-gray-900">{{ $produk->nama_produk }}</p>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $produk->nama_produk ?? '-' }}</p>
                                     </div>
                                     
                                     <div>
@@ -40,7 +40,7 @@
                                     
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Total Komponen</label>
-                                        <p class="mt-1 text-sm text-gray-900">{{ $produk->komponens->count() }} komponen</p>
+                                        <p class="mt-1 text-sm text-gray-900">{{ $produk->produkKomponens->count() }} komponen</p>
                                     </div>
                                 </div>
                             </x-partials.card>
@@ -51,26 +51,36 @@
                                 
                                 <div class="space-y-3">
                                     @php
-                                        $ukuranList = ['S', 'M', 'L', 'XL', 'XXL', 'JUMBO'];
-                                        $multipliers = [
-                                            'S' => 1.0,
-                                            'M' => 1.3,
-                                            'L' => 1.6,
-                                            'XL' => 1.9,
-                                            'XXL' => 2.2,
-                                            'JUMBO' => 2.5
-                                        ];
+                                        // Dapatkan semua ukuran yang ada di produk_komponens untuk produk ini
+                                        $ukuranTersedia = $produk->produkKomponens->pluck('ukuran')->unique()->sort();
+                                        
+                                        // Jika tidak ada data ukuran, gunakan default
+                                        if ($ukuranTersedia->isEmpty()) {
+                                            $ukuranTersedia = collect(['S', 'M', 'L', 'XL', 'XXL', 'JUMBO']);
+                                        }
                                     @endphp
                                     
-                                    @foreach($ukuranList as $ukuran)
+                                    @forelse($ukuranTersedia as $ukuran)
                                     @php
-                                        $totalBiaya = $produk->getTotalBiayaForUkuran($ukuran);
-                                        $multiplier = $multipliers[$ukuran];
+                                        // Hitung total biaya untuk ukuran tertentu dari produk_komponens
+                                        $komponenUkuran = $produk->produkKomponens->where('ukuran', $ukuran);
+                                        $totalBiaya = $komponenUkuran->sum('total_harga');
+                                        
+                                        // Jika total_harga tidak tersedia, hitung manual
+                                        if ($totalBiaya == 0 && $komponenUkuran->count() > 0) {
+                                            $totalBiaya = $komponenUkuran->sum(function($komponen) {
+                                                $harga = $komponen->harga_per_unit ?? $komponen->komponen->harga ?? 0;
+                                                $qty = $komponen->quantity ?? 1;
+                                                return $harga * $qty;
+                                            });
+                                        }
+                                        
+                                        $jumlahKomponen = $komponenUkuran->count();
                                     @endphp
                                     <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                                         <div>
                                             <span class="font-medium">{{ $ukuran }}</span>
-                                            <span class="text-sm text-gray-500">({{ $multiplier }}x)</span>
+                                            <span class="text-sm text-gray-500">({{ $jumlahKomponen }} komponen)</span>
                                         </div>
                                         <div class="text-right">
                                             <div class="font-medium text-green-600">
@@ -78,7 +88,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @endforeach
+                                    @empty
+                                    <div class="text-center py-4">
+                                        <p class="text-gray-500">Belum ada data harga berdasarkan ukuran</p>
+                                    </div>
+                                    @endforelse
                                 </div>
                             </x-partials.card>
                         </div>
@@ -114,38 +128,89 @@
                                             @foreach($produk->produkKomponens as $produkKomponen)
                                             <tr>
                                                 <td class="px-4 py-4 whitespace-nowrap">
-                                                    <div class="font-medium text-gray-900">{{ $produkKomponen->komponen->nama_komponen }}</div>
+                                                    <div class="font-medium text-gray-900">
+                                                        {{ $produkKomponen->komponen->nama_komponen ?? $produkKomponen->nama_komponen ?? 'N/A' }}
+                                                    </div>
+                                                    @if($produkKomponen->komponen && $produkKomponen->komponen->deskripsi)
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ Str::limit($produkKomponen->komponen->deskripsi, 50) }}
+                                                    </div>
+                                                    @endif
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap text-center">
-                                                    <div class="text-gray-900">Rp {{ number_format($produkKomponen->komponen->harga, 0, ',', '.') }}</div>
+                                                    <div class="text-gray-900">
+                                                        Rp {{ number_format($produkKomponen->harga_per_unit ?? $produkKomponen->komponen->harga ?? 0, 0, ',', '.') }}
+                                                    </div>
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap text-center">
-                                                    <div class="text-gray-900">{{ $produkKomponen->quantity }}</div>
+                                                    <div class="text-gray-900">{{ $produkKomponen->quantity ?? 1 }}</div>
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap text-center">
                                                     <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                                                        {{ $produkKomponen->ukuran }}
+                                                        {{ $produkKomponen->ukuran ?? 'S' }}
                                                     </span>
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap text-center">
                                                     @php
-                                                        $totalKomponen = $produkKomponen->getTotalBiayaForUkuran();
+                                                        // Hitung total harga komponen ini
+                                                        $hargaSatuan = $produkKomponen->harga_per_unit ?? $produkKomponen->komponen->harga ?? 0;
+                                                        $quantity = $produkKomponen->quantity ?? 1;
+                                                        
+                                                        // Dapatkan multiplier berdasarkan ukuran
+                                                        $ukuranMultipliers = [
+                                                            'S' => 1.0,
+                                                            'M' => 1.3,
+                                                            'L' => 1.6,
+                                                            'XL' => 1.9,
+                                                            'XXL' => 2.2,
+                                                            'JUMBO' => 2.5
+                                                        ];
+                                                        $multiplier = $ukuranMultipliers[$produkKomponen->ukuran ?? 'S'] ?? 1.0;
+                                                        
+                                                        // Hitung total
+                                                        $totalKomponen = $produkKomponen->total_harga ?? ($hargaSatuan * $quantity * $multiplier);
                                                     @endphp
                                                     <div class="font-medium text-green-600">
                                                         Rp {{ number_format($totalKomponen, 0, ',', '.') }}
                                                     </div>
+                                                    @if($multiplier != 1.0)
+                                                    <div class="text-xs text-gray-500">
+                                                        ({{ $multiplier }}x ukuran)
+                                                    </div>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @endforeach
+                                            
+                                            <!-- Total Row -->
+                                            <tr class="bg-gray-50 font-semibold">
+                                                <td class="px-4 py-4 text-right" colspan="4">
+                                                    <div class="font-medium text-gray-900">Total Keseluruhan:</div>
+                                                </td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-center">
+                                                    @php
+                                                        $grandTotal = $produk->produkKomponens->sum(function($produkKomponen) {
+                                                            $hargaSatuan = $produkKomponen->harga_per_unit ?? $produkKomponen->komponen->harga ?? 0;
+                                                            $quantity = $produkKomponen->quantity ?? 1;
+                                                            $ukuranMultipliers = [
+                                                                'S' => 1.0, 'M' => 1.3, 'L' => 1.6, 
+                                                                'XL' => 1.9, 'XXL' => 2.2, 'JUMBO' => 2.5
+                                                            ];
+                                                            $multiplier = $ukuranMultipliers[$produkKomponen->ukuran ?? 'S'] ?? 1.0;
+                                                            return $produkKomponen->total_harga ?? ($hargaSatuan * $quantity * $multiplier);
+                                                        });
+                                                    @endphp
+                                                    <div class="font-bold text-green-600 text-lg">
+                                                        Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 @else
                                 <div class="text-center py-8">
-                                    <p class="text-gray-500">Belum ada komponen yang ditambahkan</p>
-                                    <a href="{{ route('biaya-produk.edit', $produk) }}" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                                        Tambah Komponen
-                                    </a>
+                                    <p class="text-gray-500">Belum ada komponen yang ditambahkan untuk produk ini</p>
                                 </div>
                                 @endif
                             </x-partials.card>
@@ -155,11 +220,6 @@
                             <a href="{{ route('biaya-produk.index') }}" class="button">
                                 <i class="mr-1 icon ion-md-return-left text-primary"></i>
                                 @lang('crud.common.back')
-                            </a>
-
-                            <a href="{{ route('biaya-produk.edit', $produk) }}" class="button float-right" style="background-color: #800000; color: white;">
-                                <i class="mr-1 icon ion-md-create"></i>
-                                Kelola Komponen
                             </a>
                         </div>
                     </div>
