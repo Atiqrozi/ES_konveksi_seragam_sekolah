@@ -10,13 +10,16 @@
         $sizesByProduct[$produkId] = $sizes->pluck('ukuran')->toArray();
         $pricesByProduct[$produkId] = $sizes->keyBy('ukuran')->map(function ($item) {
             return [
-                'harga_produk_1' => $item->harga_produk_1,
-                'harga_produk_2' => $item->harga_produk_2,
-                'harga_produk_3' => $item->harga_produk_3,
-                'harga_produk_4' => $item->harga_produk_4
+                'harga_produk_1' => (float) $item->harga_produk_1,
+                'harga_produk_2' => (float) $item->harga_produk_2,
+                'harga_produk_3' => (float) $item->harga_produk_3,
+                'harga_produk_4' => (float) $item->harga_produk_4
             ];
         });
     }
+    
+    // Debug output
+    // dd($sizesByProduct); // Uncomment untuk debug
 @endphp
 
 <style>
@@ -46,7 +49,7 @@
 
             <x-inputs.group class="w-1/2" style="padding: 0 10px 10px 10px !important; font-size: 18px;">
                 <x-inputs.label-with-asterisk label="Pilih Tipe Harga"/>
-                <x-inputs.select name="global_tipe_harga" id="global-tipe-harga" required onchange="updateAllPrices()">
+                <x-inputs.select name="global_tipe_harga" id="global-tipe-harga" required>
                     <option disabled selected>Pilih Tipe Harga</option>
                     <option value="harga_produk_1">Harga 1</option>
                     <option value="harga_produk_2">Harga 2</option>
@@ -77,7 +80,7 @@
 
                 <!-- Pilih Produk -->
                 <x-inputs.group style="width: 275px; padding: 0 10px !important;">
-                    <x-inputs.select name="produk_id[]" required onchange="populateUkuran(this)">
+                    <x-inputs.select name="produk_id[]" class="produk-select" required onchange="populateUkuran(this)">
                         <option disabled selected>Pilih Produk</option>
                         @foreach($produks as $value => $label)
                             <option value="{{ $value }}"
@@ -97,7 +100,7 @@
 
                 <!-- Harga -->
                 <x-inputs.group style="width: 175px; padding: 0 10px !important;">
-                    <x-inputs.basic name="harga[]" class="harga-input" required readonly></x-inputs.basic>
+                    <x-inputs.basic name="harga[]" class="harga-input" required readonly placeholder="Pilih ukuran dan tipe harga"></x-inputs.basic>
                 </x-inputs.group>
 
                 <!-- Jumlah Pesanan -->
@@ -143,62 +146,148 @@
     @endif
 </div>
 
+<!-- Data untuk JavaScript -->
+<script id="data-script">
+window.sizesByProduct = <?php echo json_encode($sizesByProduct); ?>;
+window.pricesByProduct = <?php echo json_encode($pricesByProduct); ?>;
+console.log('Data loaded:', window.sizesByProduct);
+</script>
+
 <script>
-    function populateUkuran(selectElement) {
+// JavaScript functions untuk form invoice
+function populateUkuran(selectElement) {
+    console.log('populateUkuran called');
+    
+    const produkId = selectElement.value;
+    console.log('Selected product ID:', produkId);
+    
+    const ukuranSelect = selectElement.closest('.produk-group').querySelector('.ukuran-select');
+    console.log('Ukuran select element:', ukuranSelect);
+    
+    // Clear existing options
+    ukuranSelect.innerHTML = '<option disabled selected>Ukuran</option>';
+    
+    // Get sizes - try multiple sources
+    let sizes = [];
+    
+    // Method 1: From window data
+    if (window.sizesByProduct && window.sizesByProduct[produkId]) {
+        sizes = window.sizesByProduct[produkId];
+        console.log('Got sizes from window.sizesByProduct:', sizes);
+    }
+    
+    // Method 2: From data attribute (fallback)
+    if (sizes.length === 0) {
         const selectedOption = selectElement.querySelector('option:checked');
-        const ukuranSelect = selectElement.closest('.produk-group').querySelector('.ukuran-select');
+        if (selectedOption) {
+            const dataSizes = selectedOption.getAttribute('data-sizes');
+            console.log('data-sizes attribute:', dataSizes);
+            try {
+                sizes = JSON.parse(dataSizes || '[]');
+                console.log('Got sizes from data-attribute:', sizes);
+            } catch (e) {
+                console.log('Error parsing data-sizes:', e);
+            }
+        }
+    }
+    
+    // Method 3: Hardcoded fallback
+    if (sizes.length === 0) {
+        sizes = ['S', 'M', 'L', 'XL', 'XXL', 'JUMBO'];
+        console.log('Using hardcoded fallback sizes:', sizes);
+    }
+    
+    // Add options
+    sizes.forEach(size => {
+        const option = document.createElement('option');
+        option.value = size;
+        option.textContent = size;
+        ukuranSelect.appendChild(option);
+    });
+    
+    console.log('Added', sizes.length, 'size options');
+    console.log('Final ukuranSelect HTML:', ukuranSelect.innerHTML);
+}
 
-        ukuranSelect.innerHTML = '<option disabled selected>Ukuran</option>';
-        const sizes = JSON.parse(selectedOption.getAttribute('data-sizes') || '[]');
-        sizes.forEach(size => {
-            const option = document.createElement('option');
-            option.value = size;
-            option.textContent = size;
-            ukuranSelect.appendChild(option);
+function populateHarga(selectElement) {
+    console.log('populateHarga called');
+    
+    const group = selectElement.closest('.produk-group');
+    const produkSelect = group.querySelector('.produk-select');
+    const hargaInput = group.querySelector('.harga-input');
+    
+    // Try multiple ways to find global tipe harga element
+    let globalTipeHargaElement = document.getElementById('global-tipe-harga');
+    
+    if (!globalTipeHargaElement) {
+        // Try alternative selectors
+        globalTipeHargaElement = document.querySelector('select[name="global_tipe_harga"]');
+        console.log('Trying alternative selector:', globalTipeHargaElement);
+    }
+    
+    if (!globalTipeHargaElement) {
+        // Try more general approach
+        globalTipeHargaElement = document.querySelector('select[id*="tipe-harga"]');
+        console.log('Trying general selector:', globalTipeHargaElement);
+    }
+    
+    if (!globalTipeHargaElement) {
+        console.log('ERROR: Global tipe harga element not found!');
+        console.log('Available elements with IDs:');
+        document.querySelectorAll('[id]').forEach(el => {
+            console.log('- ID:', el.id, 'Element:', el.tagName);
         });
-
-        selectElement.closest('.produk-group').querySelector('.harga-input').value = '';
+        
+        console.log('Available select elements:');
+        document.querySelectorAll('select').forEach(el => {
+            console.log('- Select name:', el.name, 'ID:', el.id);
+        });
+        return;
     }
 
-    function populateHarga(selectElement) {
-        const group = selectElement.closest('.produk-group');
-        const globalTipeHarga = document.getElementById('global-tipe-harga').value;
-        const produkSelect = group.querySelector('select[name="produk_id[]"]');
-        const hargaInput = group.querySelector('.harga-input');
+    const globalTipeHarga = globalTipeHargaElement.value;
+    const produkId = produkSelect ? produkSelect.value : null;
+    const ukuran = selectElement.value;
 
-        const produkId = produkSelect.value;
-        const ukuran = group.querySelector('.ukuran-select').value;
+    console.log('Values - produkId:', produkId, 'ukuran:', ukuran, 'tipeHarga:', globalTipeHarga);
 
-        console.log('Populate harga - produkId:', produkId, 'ukuran:', ukuran, 'tipeHarga:', globalTipeHarga);
-
-        if (!produkId || !ukuran || !globalTipeHarga) {
-            hargaInput.value = '';
-            console.log('Salah satu parameter kosong, mengosongkan harga');
-            return;
-        }
-
-        const prices = @json($pricesByProduct);
-        console.log('Prices data:', prices);
-        
-        const productPrices = prices[produkId] || {};
-        console.log('Product prices for produkId', produkId, ':', productPrices);
-        
-        const sizePrice = productPrices[ukuran];
-        console.log('Size price for ukuran', ukuran, ':', sizePrice);
-        
-        const harga = sizePrice ? sizePrice[globalTipeHarga] : 0;
-        console.log('Final harga:', harga);
-
-        if (harga && harga > 0) {
-            hargaInput.value = formatCurrency(harga);
-            console.log('Harga formatted:', formatCurrency(harga));
-        } else {
-            hargaInput.value = '';
-            console.log('Harga kosong atau 0');
-        }
-        
-        calculateTotal(selectElement);
+    if (!produkId || !ukuran) {
+        console.log('Missing produkId or ukuran');
+        if (hargaInput) hargaInput.value = '';
+        return;
     }
+
+    if (!globalTipeHarga || globalTipeHarga === 'Pilih Tipe Harga') {
+        console.log('No tipe harga selected, current value:', globalTipeHarga);
+        alert('Silakan pilih tipe harga terlebih dahulu!');
+        if (hargaInput) hargaInput.value = '';
+        return;
+    }
+
+    // Get price from data
+    const prices = window.pricesByProduct || {};
+    const productPrices = prices[produkId] || {};
+    const sizePrice = productPrices[ukuran];
+    const harga = sizePrice ? sizePrice[globalTipeHarga] : 0;
+
+    console.log('Price calculation:');
+    console.log('- productPrices:', productPrices);
+    console.log('- sizePrice:', sizePrice);
+    console.log('- final harga:', harga);
+
+    if (harga && harga > 0) {
+        const formattedHarga = formatCurrency(harga);
+        if (hargaInput) {
+            hargaInput.value = formattedHarga;
+            console.log('Harga set to:', formattedHarga);
+        }
+    } else {
+        if (hargaInput) hargaInput.value = '';
+        console.log('Harga kosong atau tidak ditemukan');
+    }
+    
+    calculateTotal(selectElement);
+}
 
     function calculateTotal(element) {
         const group = element.closest('.produk-group');
@@ -257,6 +346,8 @@
     }
 
     function addProduk() {
+        console.log('=== Adding new produk ===');
+        
         const container = document.getElementById('produk-container');
         const lastGroup = container.querySelector('.produk-group:last-child');
         const newGroup = lastGroup.cloneNode(true);
@@ -274,32 +365,54 @@
         const ukuranSelect = newGroup.querySelector('.ukuran-select');
         ukuranSelect.innerHTML = '<option disabled selected>Ukuran</option>';
 
-        // Tambahkan event listener untuk elemen baru
-        const jumlahInput = newGroup.querySelector('input[name="jumlah_pesanan[]"]');
-        if (jumlahInput) {
-            jumlahInput.addEventListener('input', function() {
-                calculateTotal(this);
-            });
-        }
-
-        const produkSelect = newGroup.querySelector('select[name="produk_id[]"]');
-        if (produkSelect) {
-            produkSelect.addEventListener('change', function() {
-                populateUkuran(this);
-            });
-        }
-
-        const ukuranSelectNew = newGroup.querySelector('.ukuran-select');
-        if (ukuranSelectNew) {
-            ukuranSelectNew.addEventListener('change', function() {
-                populateHarga(this);
-            });
-        }
-
+        // Append before attaching event listeners
         container.appendChild(newGroup);
+
+        // Attach event listeners to new group
+        attachEventListeners(newGroup);
+        
         updateNumbering();
         
-        console.log('Produk baru ditambahkan');
+        console.log('New produk added and event listeners attached');
+    }
+
+    function attachEventListeners(group) {
+        console.log('=== Attaching event listeners to group ===');
+        
+        const jumlahInput = group.querySelector('input[name="jumlah_pesanan[]"]');
+        const produkSelect = group.querySelector('.produk-select');
+        const ukuranSelect = group.querySelector('.ukuran-select');
+        
+        console.log('Found elements:');
+        console.log('- jumlahInput:', jumlahInput);
+        console.log('- produkSelect:', produkSelect);
+        console.log('- ukuranSelect:', ukuranSelect);
+        
+        if (jumlahInput) {
+            jumlahInput.addEventListener('input', function() {
+                console.log('Jumlah changed via event listener');
+                calculateTotal(this);
+            });
+            console.log('✓ Event listener attached to jumlahInput');
+        }
+
+        if (produkSelect) {
+            produkSelect.addEventListener('change', function() {
+                console.log('Produk changed via event listener to:', this.value);
+                populateUkuran(this);
+            });
+            console.log('✓ Event listener attached to produkSelect');
+        }
+
+        if (ukuranSelect) {
+            ukuranSelect.addEventListener('change', function() {
+                console.log('Ukuran changed via event listener to:', this.value);
+                populateHarga(this);
+            });
+            console.log('✓ Event listener attached to ukuranSelect');
+        }
+        
+        console.log('=== Event listeners attachment completed ===');
     }
 
     function deleteProduk(button) {
@@ -325,29 +438,24 @@
         });
     }
 
-    // Initialize form ketika halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Form initialized');
-        
-        // Event listener untuk tipe harga global
-        const globalTipeHarga = document.getElementById('global-tipe-harga');
-        if (globalTipeHarga) {
-            globalTipeHarga.addEventListener('change', function() {
-                console.log('Global tipe harga changed to:', this.value);
-                updateAllPrices();
-            });
-        }
+// Initialize form ketika halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing form');
+    
+    // Event listener untuk tipe harga global
+    const globalTipeHarga = document.getElementById('global-tipe-harga');
+    if (globalTipeHarga) {
+        globalTipeHarga.addEventListener('change', updateAllPrices);
+    }
 
-        // Event listener untuk produk grup yang sudah ada
-        document.querySelectorAll('.produk-group').forEach(group => {
-            const jumlahInput = group.querySelector('input[name="jumlah_pesanan[]"]');
-            if (jumlahInput) {
-                jumlahInput.addEventListener('input', function() {
-                    calculateTotal(this);
-                });
-            }
-        });
+    // Attach event listeners to existing groups
+    document.querySelectorAll('.produk-group').forEach(attachEventListeners);
+    
+    console.log('Form initialization completed');
+    console.log('Available data:');
+    console.log('- sizesByProduct:', window.sizesByProduct);
+    console.log('- pricesByProduct keys:', Object.keys(window.pricesByProduct || {}));
+});
 
-        console.log('Event listeners initialized');
-    });
+console.log('Script loaded successfully');
 </script>

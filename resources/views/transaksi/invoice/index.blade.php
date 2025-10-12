@@ -163,6 +163,14 @@
                                             </a>
                                         @endcan 
 
+                                        @can('update', $invoice)
+                                            <a href="{{ route('invoice.edit', $invoice) }}" class="mr-1">
+                                                <button type="button" class="button">
+                                                    <i class="icon ion-md-create "></i>
+                                                </button>
+                                            </a>
+                                        @endcan
+
                                         @can('delete', $invoice)
                                             <form id="deleteForm" action="{{ route('invoice.destroy', $invoice->id) }}" method="POST">
                                                 @csrf

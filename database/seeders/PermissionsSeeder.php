@@ -102,6 +102,7 @@ class PermissionsSeeder extends Seeder
                 'list pesanan',
                 'view pesanan',
                 'create pesanan',
+                'update pesanan',
                 'delete pesanan',
             ],
             'kegiatan' => [

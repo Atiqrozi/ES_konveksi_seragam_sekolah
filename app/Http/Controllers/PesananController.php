@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\PesananStoreRequest;
 use App\Http\Requests\PesananUpdateRequest;
 use App\Exports\Pesanan_Export_Excel;
@@ -131,6 +132,15 @@ class PesananController extends Controller
      */
     public function store(PesananStoreRequest $request): RedirectResponse
     {
+        // Debug authorization
+        $user = Auth::user();
+        Log::info('User attempting to create invoice:', [
+            'user_id' => $user->id,
+            'user_name' => $user->nama,
+            'roles' => $user->roles->pluck('name'),
+            'has_permission' => $user->hasPermissionTo('create pesanan')
+        ]);
+        
         $this->authorize('create', Invoice::class);
 
         try {
@@ -155,7 +165,7 @@ class PesananController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('invoice.edit', $invoice)
+                ->route('invoice.index')
                 ->with('success', 'Invoice berhasil dibuat!');
 
         } catch (\Exception $e) {

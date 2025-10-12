@@ -26,6 +26,11 @@ class InvoicePolicy
         return $user->hasPermissionTo('create pesanan');
     }
 
+    public function update(User $user, Invoice $model): bool
+    {
+        return $user->hasPermissionTo('update pesanan');
+    }
+
     public function delete(User $user, Invoice $model): bool
     {
         return $user->hasPermissionTo('delete pesanan');
