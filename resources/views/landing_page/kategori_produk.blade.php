@@ -19,13 +19,12 @@
             font-family: Arial, sans-serif ;
             margin: 0;
             padding: 0;
-            padding-top: 70px;
         }
 
         header {
-            background-color: #252525;
             color: #fff;
-            border-bottom: 1px solid #131313;
+            background: rgba(0,0,0,0.35); /* warna gelap semi-transparan */
+            backdrop-filter: blur(1px);   /* efek blur */
             position: fixed;
             top: 0;
             width: 100%;
@@ -69,12 +68,20 @@
         }
 
         .hero-text {
-            position: absolute;
-            top: 45%;
-            left: 7%;
-            transform: translateY(-50%);
-            text-align: left;
-            max-width: 50%;
+            position: relative;
+            background-image: url("{{ asset('images/section_welcome.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 4.19);
+
         }
 
         .hero-text h1 {
@@ -400,7 +407,7 @@
     </header>
 
     <section class="hero" id="beranda">
-        <img src="{{ asset('images/hero.png') }}" alt="Hero image">
+        <!-- <img src="{{ asset('images/hero.png') }}" alt="Hero image"> -->
         <div class="hero-text">
             <h1>KATEGORI PRODUK DI<br>AGUNG'S COLLECTION</h1>
         </div>

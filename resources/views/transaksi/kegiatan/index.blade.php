@@ -26,14 +26,34 @@
                                     </span>
                                     <x-inputs.select name="paginate" id="paginate" class="form-select" style="width: 75px" onchange="window.location.href = this.value">
                                         @foreach([10, 25, 50, 100] as $value)
-                                            <option value="{{ route('kegiatan.index', ['paginate' => $value, 'search' => $search]) }}" {{ $kegiatans->perPage() == $value ? 'selected' : '' }}>
-                                                {{ $value }}
-                                            </option>
-                                        @endforeach
+                                                @php $query = array_merge(request()->query(), ['paginate' => $value]); @endphp
+                                                <option value="{{ route('kegiatan.index', $query) }}" {{ $kegiatans->perPage() == $value ? 'selected' : '' }}>
+                                                    {{ $value }}
+                                                </option>
+                                            @endforeach
                                     </x-inputs.select>
                                     <span style="color: rgb(88, 88, 88);">
                                         &nbsp;Data
                                     </span>
+
+                                    {{-- status filter select --}}
+                                    <div class="ml-4">
+                                        <x-inputs.select name="status" onchange="this.form.submit()">
+                                            <option value="all" {{ (isset($status) && $status === 'all') ? 'selected' : '' }}>SEMUA</option>
+                                            <option value="Belum Ditarik" {{ (isset($status) && $status === 'Belum Ditarik') ? 'selected' : '' }}>Belum Ditarik</option>
+                                            <option value="Selesai" {{ (isset($status) && $status === 'Selesai') ? 'selected' : '' }}>Selesai</option>
+                                        </x-inputs.select>
+                                    </div>
+
+                                    {{-- jumlah filter select --}}
+                                    <div class="ml-4">
+                                        <x-inputs.select name="jumlah" onchange="this.form.submit()">
+                                            <option value="">Semua Jumlah</option>
+                                            @foreach($jumlahOptions as $j)
+                                                <option value="{{ $j }}" {{ (isset($jumlah) && $jumlah == $j) ? 'selected' : '' }}>{{ $j }}</option>
+                                            @endforeach
+                                        </x-inputs.select>
+                                    </div>
                                 </div>
                             </form>
                         </div>

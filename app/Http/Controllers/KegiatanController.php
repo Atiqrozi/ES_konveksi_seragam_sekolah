@@ -25,10 +25,13 @@ class KegiatanController extends Controller
     {
         $this->authorize('view-any', Kegiatan::class);
 
-        $paginate = max(10, intval($request->input('paginate', 10)));
-        $search = $request->get('search', '');
-        $sortBy = $request->get('sort_by', 'id');
-        $sortDirection = $request->get('sort_direction', 'desc');
+    $paginate = max(10, intval($request->input('paginate', 10)));
+    $search = $request->get('search', '');
+    $sortBy = $request->get('sort_by', 'id');
+    $sortDirection = $request->get('sort_direction', 'desc');
+    $status = $request->get('status', 'Belum Ditarik');
+
+        $jumlah = $request->get('jumlah', null);
 
         $kegiatans = Kegiatan::query()
             ->when($search, function ($query, $search) {
@@ -47,6 +50,11 @@ class KegiatanController extends Controller
             $kegiatans->where('user_id', Auth::user()->id);
         }
 
+        // filter by jumlah if provided
+        if ($jumlah) {
+            $kegiatans->where('jumlah_kegiatan', $jumlah);
+        }
+
         // Sorting
         if ($sortBy === 'kegiatan') {
             $kegiatans = $kegiatans->join('pekerjaans', 'kegiatans.pekerjaan_id', '=', 'pekerjaans.id')
@@ -58,12 +66,22 @@ class KegiatanController extends Controller
             $kegiatans = $kegiatans->orderBy($sortBy, $sortDirection);
         }
 
-        // Filter status kegiatan
-        $kegiatans = $kegiatans->where('status_kegiatan', 'LIKE', 'Belum Ditarik')
-                            ->paginate($paginate)
-                            ->withQueryString();
+        // Filter status kegiatan (default 'Belum Ditarik', 'all' untuk semua)
+        if ($status !== 'all') {
+        if ($status === 'Selesai') {
+            $kegiatans = $kegiatans->whereIn('status_kegiatan', ['Selesai', 'Sudah Ditarik']);
+        } else {
+            $kegiatans = $kegiatans->where('status_kegiatan', 'LIKE', $status);
+        }
+    }
 
-        return view('transaksi.kegiatan.index', compact('kegiatans', 'search', 'sortBy', 'sortDirection'));
+
+        $kegiatans = $kegiatans->paginate($paginate)->withQueryString();
+
+        // get distinct jumlah_kegiatan values for dropdown
+        $jumlahOptions = Kegiatan::select('jumlah_kegiatan')->distinct()->orderBy('jumlah_kegiatan')->pluck('jumlah_kegiatan')->toArray();
+
+        return view('transaksi.kegiatan.index', compact('kegiatans', 'search', 'sortBy', 'sortDirection', 'status', 'jumlah', 'jumlahOptions'));
     }
 
 

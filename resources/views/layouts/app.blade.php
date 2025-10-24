@@ -13,6 +13,9 @@
         
         <!-- Styles -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+    <!-- Choices.js for searchable select (global include) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
         
         <!-- Icons -->
         <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
@@ -30,15 +33,16 @@
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7HUiB39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" crossorigin="anonymous"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
-        <!-- Include SweetAlert CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <!-- Choices.js script (global) -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
-        <!-- Include SweetAlert JS -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Include SweetAlert2 CSS & JS (use proper file paths) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
                 
         <style>
             a {
@@ -229,11 +233,11 @@
             }
 
             main {
-                background-image: url('images/bg.jpg');
+                background-image: url('{{ asset('images/bg.jpg') }}');
             }
 
             .bg {
-                background-image: url(" {{ asset('images/bg.jpg') }} ")
+                background-image: url('{{ asset('images/bg.jpg') }}');
             }
 
             .bg-grey {
@@ -326,5 +330,27 @@
                 })
             })
         </script>
+            <!-- Global Choices.js initializer (safety net) -->
+            <script>
+                function initGlobalChoices() {
+                    if (typeof Choices === 'undefined') return;
+                    document.querySelectorAll('select.choices-select').forEach(el => {
+                        try {
+                            if (!el.__choicesInitialized) {
+                                new Choices(el, {searchEnabled: true, itemSelectText: ''});
+                                el.__choicesInitialized = true;
+                            }
+                        } catch (e) {
+                            console.warn('Global Choices init failed for', el, e);
+                        }
+                    });
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initGlobalChoices);
+                } else {
+                    initGlobalChoices();
+                }
+            </script>
     </body>
 </html>

@@ -17,13 +17,12 @@
             font-family: Arial, sans-serif ;
             margin: 0;
             padding: 0;
-            padding-top: 70px;
         }
 
         header {
-            background-color: #252525;
             color: #fff;
-            border-bottom: 1px solid #131313;
+            background: rgba(0,0,0,0.35); /* warna gelap semi-transparan */
+            backdrop-filter: blur(1px);   /* efek blur */
             position: fixed;
             top: 0;
             width: 100%;
@@ -67,12 +66,33 @@
         }
 
         .hero-text {
+            position: relative;
+            background-image: url("{{ asset('images/section_welcome.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 4.19);
+        }
+
+        .hero-text::before {
+            content: "";
             position: absolute;
-            top: 45%;
-            left: 7%;
-            transform: translateY(-50%);
-            text-align: left;
-            max-width: 50%;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45); /* Ubah opacity sesuai kebutuhan */
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hero-text > * {
+            position: relative;
+            z-index: 3;
         }
 
         .hero-text h1 {
@@ -95,8 +115,15 @@
             align-items: center;
         }
 
+        /* Ensure the about section container stacks its children vertically
+           so the heading appears above the boxes instead of beside them */
+        .about .container {
+            display: block;
+        }
+
         .about {
-            padding: 100px 0;
+            /* adjust top/bottom padding to position the title similar to the reference image */
+            padding: 60px 0 40px 0;
         }
 
         .about .col-md-6 img {
@@ -308,6 +335,25 @@
             margin: 100px auto 0 auto;
         }
 
+        /* Title for the 'Mengapa Harus Kami?' section - match font + color of Rekomendasi Produk */
+        .mengapa-title {
+            text-align: center;
+            font-family: 'Amaranth', sans-serif;
+            font-weight: bold;
+            color: #800000;
+            font-size: 32px;
+            /* tuned top and bottom spacing to match the reference */
+            margin: 20px auto 30px auto !important;
+            width: 80%;
+            line-height: 1.1;
+        }
+
+        /* Ensure the mengapa title uses these margins inside .about */
+        .about .container h2.mengapa-title {
+            margin-top: 20px !important;
+            margin-bottom: 30px !important;
+        }
+
         .modal-product-image {
             width: 90%;
             height: 550px;
@@ -342,36 +388,168 @@
             background-color: #585858;
         }
 
+        /* Card container and fancy card styles (adapted from provided mixin) */
+        :root{
+            --bg: 25% 0.0075 70;
+            --pink: 77.75% 0.1003 350.51;
+            --gold: 84.16% 0.1169 71.19;
+            --mint: 84.12% 0.1334 165.28;
+            --mobile--w: 360px;
+            --mobile--h: 540px;
+            --outline-w: 9px;
+            --preview-bg: #fff;
+        }
+
         .card-list {
-            display: block;
+            /* use flex container to center previews */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
             margin: 1rem auto;
             padding: 0;
-            font-size: 0;
-            text-align: center;
             list-style: none;
         }
 
         .card {
-            display: inline-block;
-            width: 90%;
+            --bg-pos-y--start: 0;
+            --bg-pos-y--end: 0;
+            --bg-pos-y: var(--bg-pos-y--start);
+            --delay: 0s;
+            --duration: 6s;
+            --img: url('{{ asset('images/default-product.jpg') }}');
+            --shadow-blur: 24px;
+            --shadow-color: rgba(0,0,0,0.12);
+
+            background-clip: padding-box;
+            background-image: var(--img);
+            background-position-y: var(--bg-pos-y);
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            border: var(--outline-w) solid transparent;
+            border-radius: 6px;
+            box-shadow: 0 0 var(--shadow-blur) 0 var(--shadow-color);
+
+            transition: border 0.15s, box-shadow 0.15s, filter 0.6s, outline-offset 0.6s, opacity 0.3s, transform 0.3s, z-index 0.15s;
+
+            filter: grayscale(100%) sepia(5%);
+            mix-blend-mode: multiply;
+            opacity: 0.69;
+
+            transform: scale(0.85) rotate(var(--rotation, -4deg));
+
+            outline: var(--outline-w) solid var(--preview-bg);
+            outline-offset: var(--outline-w);
+
+            min-height: var(--mobile--h);
+            min-width: var(--mobile--w);
+            width: 100%;
             max-width: 320px;
-            max-height: 480px;
-            margin: 1rem;
-            font-size: 1rem;
-            text-decoration: none;
+            height: 100%;
+
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 0 3rem -1rem rgba(0,0,0,0.5);
-            transition: transform 0.1s ease-in-out, box-shadow 0.1s;
-            border-radius: 7px;
+
+            animation-name: bg-scroll;
+            animation-delay: var(--delay);
+            animation-duration: var(--duration);
+            animation-fill-mode: forwards;
+        }
+
+        .card:focus-within,
+        .card:hover{
+            --shadow-blur: 200px;
+            --shadow-color: rgba(255,200,0,0.15);
+            --border-color: var(--shadow-color);
+            background-color: white;
+            mix-blend-mode: initial;
+            filter: none;
+            opacity: 1;
+            outline-offset: calc(var(--outline-w) / 2);
+            transform: scale(1) rotate(0deg);
+            z-index: 6;
+        }
+
+        .card:focus-within{ z-index: 7; }
+
+        /* Slight per-card variations similar to provided example */
+        .card:nth-of-type(2){ --bg-pos-y--end: calc(var(--mobile--h) * -1.025); --rotation: 3deg; }
+        .card:nth-of-type(3){ --bg-pos-y--end: calc(var(--mobile--h) * -2.25); --duration: 6.5s; --rotation: -1deg; }
+        .card:nth-of-type(4){ --bg-pos-y--end: calc(var(--mobile--h) * -3.75); --duration: 6.75s; --rotation: -5deg; }
+        .card:nth-of-type(5){ --bg-pos-y--end: calc(var(--mobile--h) * -4.82); --duration: 7s; --rotation: -2deg; }
+        .card:nth-of-type(6){ --bg-pos-y--end: calc(var(--mobile--h) * -5.85); --duration: 7.25s; --rotation: 2deg; }
+        .card:nth-of-type(7){ --bg-pos-y--end: calc(var(--mobile--h) * -7.21); --duration: 7.5s; --rotation: 4deg; }
+
+        /* If the HTML uses inner .card-image for preview, keep it but make it occupy the visible area */
+        .card .card-image {
+            display: block;
+            width: 100%;
+            height: 320px;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-bottom: 20px solid #fff;
+            background-color: #585858;
+            border-radius: 6px 6px 0 0;
         }
 
         .card .card-image h4 {
             font-weight: 900;
             position: relative;
-            top: 340px;
+            top: 0;
             font-size: 16px;
             color: rgba(0,0,0,.9);
             font-family: "Amaranth", sans-serif;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            background: #fff;
+            margin: 0;
+        }
+
+        @keyframes bg-scroll { to { background-position-y: var(--bg-pos-y--end); } }
+
+        /* subtle glow that follows cursor when hovering a card */
+        .card::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            mix-blend-mode: screen;
+            opacity: 0;
+            transition: opacity 260ms ease, transform 260ms ease;
+            /* default position center */
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            /* two-layer approach: subtle moving center (top) + fixed outer ring (below) */
+            /* the second radial-gradient creates an orange ring near the card edge */
+            background:
+                radial-gradient(circle at var(--mouse-x) var(--mouse-y),
+                    rgba(255,200,80,0.00) 0%,
+                    rgba(255,200,80,0.00) 10%,
+                    rgba(255,180,60,0.12) 26%,
+                    rgba(255,150,40,0.08) 34%,
+                    transparent 48%
+                ),
+                radial-gradient(circle at 50% 50%,
+                    rgba(255,200,80,0.00) 0%,
+                    rgba(255,200,80,0.00) 64%,
+                    rgba(255,180,60,0.28) 72%,
+                    rgba(255,150,40,0.22) 78%,
+                    rgba(255,120,30,0.16) 86%,
+                    transparent 94%
+                );
+            filter: blur(18px);
+        }
+
+        .card:hover::before,
+        .card:focus-within::before{
+            opacity: 1;
         }
 
         @media only screen and (max-width: 450px) {
@@ -453,6 +631,110 @@
         .carousel-control-next {
             right: 10px; /* jarak dari sisi kanan */
         }
+
+        /* === Agar tinggi kedua box sama === */
+        .equal-height {
+        display: flex;
+        flex-wrap: wrap;
+        }
+
+        .equal-height .col-md-6 {
+        display: flex;
+        }
+
+        .equal-height > [class*='col-'] {
+        display: flex;
+        }
+
+        .equal-height .box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        }
+
+        /* === Style box === */
+    .box {
+    --borderradius: 14px;
+    background: #fff;
+    border: 1px solid #222;
+    border-radius: var(--borderradius);
+    /* Further reduced padding to tighten vertical spacing */
+    padding: 0.35rem 0.7rem;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* biar isi sejajar */
+    height: 100%; /* biar semua kolom sama tinggi */
+    }
+
+        .box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .box::before,
+        .box::after {
+        border-radius: var(--borderradius, 14px);
+        background-image: linear-gradient(
+            45deg,
+            #fff 33.33%,
+            rgba(0, 0, 0, 0.95) 33.33%,
+            rgba(0, 0, 0, 0.95) 50%,
+            #fff 50%,
+            #fff 83.33%,
+            rgba(0, 0, 0, 0.95) 83.33%,
+            rgba(0, 0, 0, 0.95) 100%
+        );
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: -2;
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 100%;
+        height: 100%;
+        background-size: var(--bgsize, 0.28rem) var(--bgsize, 0.28rem);
+        }
+
+        .box::before {
+        top: 0;
+        left: 0;
+        background: white;
+        z-index: -1;
+        }
+
+        /* === Gambar === */
+    .box img {
+    width: 100%;
+    max-height: 230px; /* 🔹 kurangi tinggi gambar */
+    object-fit: cover;
+    border-radius: 12px;
+    /* reduced bottom margin to bring title closer */
+    margin-bottom: 0.15rem;
+    }
+
+        /* === Judul === */
+    .box h2 {
+    font-family: 'Amaranth', sans-serif;
+    color: #800000;
+    font-size: 20px;
+    font-weight: bold;
+    /* tighten top and bottom margins for heading */
+    margin: 0.05rem 0 0.2rem;
+    }
+
+
+        /* === Paragraf === */
+    .box p {
+    font-size: 15px;
+    /* even tighter line-height and smaller bottom margin */
+    line-height: 1.3;
+    text-align: justify;
+    margin: 0 0 0.15rem 0;
+    padding: 0;
+    }
+
     </style>
 </head>
 <body>
@@ -483,8 +765,7 @@
         </nav>
     </header>
 
-    <section class="hero" id="beranda">
-        <img src="{{ asset('images/hero.png') }}" alt="Hero image">
+    <section class="hero" id="beranda"> 
         <div class="hero-text">
             <h1>SELAMAT DATANG DI<br>AGUNG'S COLLECTION</h1>
             <p>Tempat yang tepat untuk menghasilkan pakaian dan tekstil terbaik.</p>
@@ -492,20 +773,41 @@
     </section>
 
     <section class="about" id="tentang_kami">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 image_1" style="text-align: right;">
+<div class="container">
+        <h2 class="mengapa-title">Mengapa Harus Kami?</h2>
+        <div class="row equal-height">
+            <!-- Bagian Kualitas Tetap Terjaga -->
+            <div class="col-md-6">
+                <div class="box image_1">
                     <img src="{{ asset('images/tentang_kami_1.jpg') }}" alt="About Image 1">
-                    <h2>Kualitas Tetap Terjaga</h2>
-                    <p>Walau memiliki banyak pekerja dan mampu menyelesaikan pekerjaan dengan cepat, Agung's Collection yang memiliki para pekerja yang terampil mampu menangani pesanan dalam jumlah besar dengan tetap menjaga kualitas tinggi pada setiap produk yang dihasilkan. Jadi dengan proses pengerjaan yang cepat kami tidak akan pernah mengorbankan kualitas karena kualitas tetaplah yang utama bagi kami</p>
+                    <h2>Kualitas Produk Terjamin Terjaga</h2>
+                    <p>
+                        Walau memiliki banyak pekerja dan mampu menyelesaikan pekerjaan dengan cepat, 
+                        Agung's Collection yang memiliki para pekerja yang terampil mampu menangani 
+                        pesanan dalam jumlah besar dengan tetap menjaga kualitas tinggi pada setiap 
+                        produk yang dihasilkan. Jadi dengan proses pengerjaan yang cepat kami tidak akan 
+                        pernah mengorbankan kualitas karena kualitas tetaplah yang utama bagi kami.
+                    </p>
                 </div>
-                <div class="col-md-6 image_2">
-                    <h2>Pekerja yang Banyak</h2>
-                    <p>Agung's Collection dikenal sebagai salah satu industri tekstil dan garmen yang memiliki jumlah pekerja yang banyak dan kompeten. Jumlah pekerja yang banyak memungkinkan kami untuk fleksibel dan cepat dalam merespons permintaan pesanan. Kami dapat menangani berbagai proyek, baik skala kecil maupun besar, dengan efisiensi. Keberhasilan kami adalah hasil dari kerja keras dan dedikasi para pekerja kami yang ahli dalam bidangnya masing-masing.</p>
+            </div>
+
+            <!-- Bagian Pekerja yang Banyak -->
+            <div class="col-md-6">
+                <div class="box image_2">
                     <img src="{{ asset('images/tentang_kami_2.jpg') }}" alt="About Image 2">
+                    <h2>Tenaga kerja Yang Berkompeten</h2>
+                    <p>
+                        Agung's Collection dikenal sebagai salah satu industri tekstil dan garmen yang 
+                        memiliki jumlah pekerja yang banyak dan kompeten. Jumlah pekerja yang banyak 
+                        memungkinkan kami untuk fleksibel dan cepat dalam merespons permintaan pesanan. 
+                        Kami dapat menangani berbagai proyek, baik skala kecil maupun besar, dengan efisiensi. 
+                        Keberhasilan kami adalah hasil dari kerja keras dan dedikasi para pekerja kami yang ahli 
+                        dalam bidangnya masing-masing.
+                    </p>
                 </div>
             </div>
         </div>
+    </div>
 
 
         <h2 class="title_rekomendasi_produk">Rekomendasi Produk</h2>
@@ -659,6 +961,24 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Glow follow cursor for .card
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', function(e){
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+            });
+            card.addEventListener('mouseleave', function(){
+                // optional: reset to center slowly
+                card.style.setProperty('--mouse-x', '50%');
+                card.style.setProperty('--mouse-y', '50%');
+            });
+        });
+    </script>
 
     <a class="pesan-sekarang-btn" href="https://wa.me/6281235621208?text=Halo,%20saya%20ingin%20membeli%20produk%20secara%20eceran%20di%20Agung's%20Collection.%0ANama%3A%20%5BNama%20Anda%5D%0AProduk%3A%20%5BProduk%20yang%20dibeli%5D%0AJumlah%3A%20%5BJumlah%20Produk%5D%0AAlamat%3A%20%5BAlamat%20Pengiriman%5D
     " target="_blank">

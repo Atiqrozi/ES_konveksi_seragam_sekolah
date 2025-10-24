@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('komponens', function (Blueprint $table) {
-            $table->dropColumn(['keterangan', 'satuan', 'is_active']);
+        Schema::table('produk_komponens', function (Blueprint $table) {
+            if (Schema::hasColumn('produk_komponens', 'keterangan')) {
+                $table->dropColumn('keterangan');
+            }
         });
     }
 
@@ -21,10 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('komponens', function (Blueprint $table) {
+        Schema::table('produk_komponens', function (Blueprint $table) {
             $table->text('keterangan')->nullable();
-            $table->string('satuan');
-            $table->boolean('is_active')->default(true);
         });
     }
 };

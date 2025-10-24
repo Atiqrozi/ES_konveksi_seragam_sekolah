@@ -21,6 +21,18 @@
                                 <div class="flex items-center w-full">
                                     <x-inputs.text name="search" value="{{ $search ?? '' }}" placeholder="{{ __('crud.common.search') }}" autocomplete="off"></x-inputs.text>
 
+                                    {{-- product dropdown for Admin only --}}
+                                    @if(auth()->user()->hasRole('Admin'))
+                                        <div class="ml-2">
+                                            <x-inputs.select name="product_id" id="product_id">
+                                                <option value="">Pilih Produk</option>
+                                                @foreach($produks as $id => $name)
+                                                    <option value="{{ $id }}" {{ (isset($product_id) && $product_id == $id) ? 'selected' : '' }}>{{ $name }}</option>
+                                                @endforeach
+                                            </x-inputs.select>
+                                        </div>
+                                    @endif
+
                                     <div class="ml-1">
                                         <button type="submit" class="button" style="background-color: #800000; color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='#700000'; this.style.color='white';" onmouseout="this.style.backgroundColor='#800000'; this.style.color='white';">
                                             <i class="icon ion-md-search"></i>
@@ -70,7 +82,10 @@
                                     </span>
                                     <x-inputs.select name="paginate" id="paginate" class="form-select" style="width: 75px" onchange="window.location.href = this.value">
                                         @foreach([10, 25, 50, 100] as $value)
-                                            <option value="{{ route('invoice.index', ['paginate' => $value, 'search' => $search]) }}" {{ $invoices->perPage() == $value ? 'selected' : '' }}>
+                                            @php
+                                                $query = array_merge(request()->query(), ['paginate' => $value]);
+                                            @endphp
+                                            <option value="{{ route('invoice.index', $query) }}" {{ $invoices->perPage() == $value ? 'selected' : '' }}>
                                                 {{ $value }}
                                             </option>
                                         @endforeach

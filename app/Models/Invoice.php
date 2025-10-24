@@ -21,6 +21,12 @@ class Invoice extends Model
         return $this->hasMany(Pesanan::class, 'invoice_id');
     }
 
+    // plural alias for backward compatibility (some controllers use 'pesanans')
+    public function pesanans()
+    {
+        return $this->hasMany(Pesanan::class, 'invoice_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'customer_id');

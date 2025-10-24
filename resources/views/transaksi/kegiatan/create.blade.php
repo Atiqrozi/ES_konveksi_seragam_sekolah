@@ -52,3 +52,56 @@
     </div>
 </x-app-layout>
 
+@push('scripts')
+    <!-- Choices.js for searchable select (no jQuery) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        function initChoicesForKegiatan() {
+            // The component renders the class on the actual <select>, so target select.choices-select
+            const elements = document.querySelectorAll('select.choices-select, .choices-select');
+            console.log('initChoicesForKegiatan: found elements count =', elements.length);
+            if (typeof Choices === 'undefined') {
+                console.warn('Choices.js not loaded (Choices is undefined) — attempting dynamic load fallback.');
+                // Try to dynamically load Choices.js then init
+                const existing = document.querySelector('script[data-choices-fallback]');
+                if (!existing) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js';
+                    script.async = true;
+                    script.setAttribute('data-choices-fallback', '1');
+                    script.onload = function () {
+                        console.log('Dynamic Choices.js loaded, running initChoicesForKegiatan again');
+                        try { initChoicesForKegiatan(); } catch(e){ console.error('init after dynamic load failed', e); }
+                    };
+                    script.onerror = function () { console.error('Dynamic load of Choices.js failed'); };
+                    document.head.appendChild(script);
+                }
+                // don't attempt to init until the script loads
+                return;
+            }
+            elements.forEach(function (el) {
+                // If we accidentally selected a wrapper, try to find a descendant select
+                if (el.tagName !== 'SELECT') {
+                    el = el.querySelector('select') || el;
+                }
+                if (!el || el.__choicesInitialized) return;
+                try {
+                    const instance = new Choices(el, {searchEnabled: true, itemSelectText: ''});
+                    el.__choicesInitialized = true;
+                    console.log('Choices initialized for select#' + (el.id || el.name), instance);
+                } catch (e) {
+                    console.warn('Choices init failed', e);
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChoicesForKegiatan);
+        } else {
+            // DOM already ready (script pushed late) — run immediately
+            initChoicesForKegiatan();
+        }
+    </script>
+@endpush
+

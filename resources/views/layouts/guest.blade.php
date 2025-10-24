@@ -23,16 +23,20 @@
 
         <style>
             .main {
-                background-image: url('images/bg.jpg');
+                background-image: url("{{ asset('images/section_welcome.png') }}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                min-height: 100vh;
             }
 
             .bg-grey {
-                background-color: rgba(243, 244, 246, 0.95);
+                background-color: rgba(0, 0, 0, 0.3);
             }
         </style>
     </head>
     <body>
-        <div class="font-sans text-gray-900 antialiased main">
+        <div class="font-sans text-gray-900 main">
             {{ $slot }}
         </div>
     </body>

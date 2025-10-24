@@ -182,10 +182,13 @@ class PermissionsSeeder extends Seeder
             ],
         ];
 
-        // Create permissions
+        // Create or update permissions (ensure guard_name = 'web' and idempotence)
         foreach ($permissions as $group => $perms) {
             foreach ($perms as $perm) {
-                Permission::create(['name' => $perm]);
+                Permission::updateOrCreate(
+                    ['name' => $perm],
+                    ['guard_name' => 'web']
+                );
             }
         }
 
@@ -217,7 +220,11 @@ class PermissionsSeeder extends Seeder
             $permissions['kategori'],
             ['list absensi', 'view absensi'],
         ))->get();
-        $admin_role = Role::create(['name' => 'Admin']);
+        // Create or get Admin role and assign permissions
+        $admin_role = Role::updateOrCreate(
+            ['name' => 'Admin'],
+            ['guard_name' => 'web']
+        );
         $admin_role->givePermissionTo($admin_permissions);
 
         // Assign specific permissions to Pegawai role
@@ -227,7 +234,11 @@ class PermissionsSeeder extends Seeder
             $permissions['pengajuan_penarikan_gaji'],
             $permissions['absensi'],
         ))->get();
-        $pegawai_role = Role::create(['name' => 'Pegawai']);
+        // Create or get Pegawai role and assign permissions
+        $pegawai_role = Role::updateOrCreate(
+            ['name' => 'Pegawai'],
+            ['guard_name' => 'web']
+        );
         $pegawai_role->givePermissionTo($pegawai_permissions);
 
         // Assign specific permissions to Sales role
@@ -235,7 +246,11 @@ class PermissionsSeeder extends Seeder
             'list pesanan',
             'view pesanan'
         ])->get();
-        $sales_role = Role::create(['name' => 'Sales']);
+        // Create or get Sales role and assign permissions
+        $sales_role = Role::updateOrCreate(
+            ['name' => 'Sales'],
+            ['guard_name' => 'web']
+        );
         $sales_role->givePermissionTo($sales_permissions);
     }
 }

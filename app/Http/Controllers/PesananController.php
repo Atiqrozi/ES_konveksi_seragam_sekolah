@@ -39,6 +39,7 @@ class PesananController extends Controller
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
         $customer_input = $request->input('customer_input');
+    $product_id = $request->input('product_id');
 
         // Validate date range
         if ($start_date && $end_date && $start_date > $end_date) {
@@ -64,6 +65,13 @@ class PesananController extends Controller
             })
             ->with('user');
 
+        // Filter by product (if provided) - invoices that have pesanans for that product
+        if ($product_id) {
+            $invoices->whereHas('pesanans', function ($q) use ($product_id) {
+                $q->where('produk_id', $product_id);
+            });
+        }
+
         // Apply sorting
         if ($sortBy === 'customer') {
             $invoices = $invoices->join('users', 'invoices.customer_id', '=', 'users.id')
@@ -80,6 +88,9 @@ class PesananController extends Controller
 
         $invoices = $invoices->paginate($paginate)->appends($request->query());
 
+        // product list (for admin dropdown)
+        $produks = Produk::orderBy('nama_produk')->pluck('nama_produk', 'id');
+
         return view('transaksi.invoice.index', compact(
             'invoices', 
             'search', 
@@ -87,7 +98,9 @@ class PesananController extends Controller
             'sortBy', 
             'sortDirection', 
             'start_date', 
-            'end_date'
+            'end_date',
+            'produks',
+            'product_id'
         ));
     }
 

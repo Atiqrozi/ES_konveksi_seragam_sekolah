@@ -3,7 +3,7 @@
 <div class="flex flex-wrap">
     <x-inputs.group class="w-1/2">
         <x-inputs.label-with-asterisk label="Nama Pekerjaan"/>
-        <x-inputs.select name="pekerjaan_id" required>
+    <x-inputs.select name="pekerjaan_id" required class="choices-select">
             @php $selected = old('pekerjaan_id', ($editing ? $kegiatan->pekerjaan_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Pilih Kegiatan</option>
             @foreach($pekerjaans as $value => $label)

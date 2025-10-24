@@ -16,15 +16,19 @@
             @csrf
             <div>
                 <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full p-2 border rounded" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-input id="email"
+                    class="block mt-1 w-full p-2 bg-transparent text-white placeholder-white border-0 border-b-2 border-white focus:outline-none focus:ring-0 focus:border-white"
+                    type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
 
             <div class="mt-4">
                 <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full p-2 border rounded" type="password" name="password" required autocomplete="current-password" />
+                <x-input id="password" 
+                    class="block mt-1 w-full p-2 bg-transparent text-white placeholder-white border-0 border-b-2 border-white focus:outline-none focus:ring-0 focus:border-white"
+                    type="password" name="password" required autocomplete="current-password" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-center mt-6 mb-3">
                 <x-button class="ml-4" style="background-color: #800000; color:white">
                     {{ __('Log in') }}
                 </x-button>
