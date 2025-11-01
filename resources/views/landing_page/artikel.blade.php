@@ -339,8 +339,9 @@
             cursor: default;
         }
 
+        /* disable page background image to avoid unexpected bg.jpg showing */
         body {
-            background-image: url("{{ asset('images/bg.jpg') }}");
+            background-image: none;
         }
 
         main {
@@ -355,6 +356,9 @@
         @media only screen and (max-width: 768px) {
             .navbar ul {
                 text-align: center;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
 
             .hero {
@@ -363,15 +367,34 @@
 
             .hero .hero-text {
                 text-align: center;
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                max-width: 100%;
+                padding: 2rem 1rem;
+                height: 60vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .hero .hero-text h1, .hero .hero-text p {
-                width: 170%;
+            .hero .hero-text h1 {
+                width: 100%;
+                font-size: 28px;
+                line-height: 1.05;
+                margin: 0.2rem 0;
+            }
+
+            .hero .hero-text p {
+                width: 100%;
+                font-size: 14px;
+                margin: 0.4rem 0 0 0;
             }
 
             .hero img {
-                height: 700px; 
-                width: auto;
+                height: auto; 
+                width: 100%;
                 display: block;
             }
 

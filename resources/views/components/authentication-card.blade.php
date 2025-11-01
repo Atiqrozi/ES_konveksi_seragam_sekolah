@@ -10,6 +10,21 @@
         background: rgba(255, 255, 255, 0.3);
         backdrop-filter: blur(4px);
     }
+    /* Mobile: make the auth card narrower so it doesn't fill entire screen */
+    @media only screen and (max-width: 768px) {
+        .auth-card {
+            width: calc(100% - 48px) !important; /* leave side gutters */
+            max-width: 420px !important;
+            margin: 24px auto !important;
+            padding: 1rem !important;
+            border-radius: 10px !important;
+        }
+
+        .logoLogin {
+            width: 40% !important;
+            margin: 18px auto !important;
+        }
+    }
 </style>
 
 <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-grey">

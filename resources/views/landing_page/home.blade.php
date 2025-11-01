@@ -259,60 +259,82 @@
         }
 
         @media only screen and (max-width: 768px) {
+            /* Stack nav items vertically on small screens */
             nav ul {
                 text-align: center;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
 
+            /* Make hero behave on small screens: reduce height, add padding and prevent overflow */
             .hero {
                 overflow: hidden;
             }
 
             .hero .hero-text {
                 text-align: center;
+                height: 60vh; /* reduce from 100vh for better fit */
+                padding: 2rem 1rem;
+                background-position: center;
+                justify-content: center;
             }
 
-            .hero .hero-text h1, .hero .hero-text p {
-                width: 170%;
+            /* Ensure heading and paragraph fit the viewport */
+            .hero .hero-text h1 {
+                width: 100%;
+                font-size: 28px;
+                line-height: 1.05;
+                margin: 0.2rem 0;
+                text-wrap: balance;
             }
 
+            .hero .hero-text p {
+                width: 100%;
+                font-size: 14px;
+                margin: 0.4rem 0 0 0;
+            }
+
+            /* Make the hero background image responsive */
             .hero img {
-                height: 700px;
-                width: auto;
+                height: auto;
+                width: 100%;
                 display: block;
             }
 
+            /* About section: simpler spacing for stacked layout */
             .about .row .col-md-6 {
                 text-align: center !important;
+                margin-bottom: 20px;
             }
 
-            .about .row .image_1 h2 {
+            .about .row .image_1 h2,
+            .about .row .image_2 h2 {
                 margin-top: 20px;
             }
 
-            .about .row .image_1 p {
-                margin-bottom: 0;
-            }
-
-            .about .row .image_2 h2 {
-                margin-top: 350px;
-            }
-
+            .about .row .image_1 p,
             .about .row .image_2 p {
                 margin-bottom: 0;
             }
 
+            /* reset absolute positioning on small screens to avoid overflow */
             .about .row .image_2 img {
-                position: absolute;
-                left: 0;
-                bottom: 420px;
+                position: static;
+                bottom: auto;
+                left: auto;
+                display: block;
+                margin: 0 auto;
+                max-width: 100%;
             }
 
             .kontak button {
-                margin-bottom: 50px;
+                margin-bottom: 30px;
             }
 
             .kontak .container {
                 justify-content: center;
+                padding: 0 1rem;
             }
 
             .p_rekomendasi_produk {
@@ -666,6 +688,7 @@
     flex-direction: column;
     justify-content: space-between; /* biar isi sejajar */
     height: 100%; /* biar semua kolom sama tinggi */
+    overflow: hidden; /* prevents inner scrollbars from pseudo-elements or content */
     }
 
         .box:hover {
@@ -690,19 +713,22 @@
         display: block;
         position: absolute;
         z-index: -2;
+        /* keep pseudo-elements inset inside the .box to avoid overflow */
         top: 0.75rem;
         left: 0.75rem;
-        width: 100%;
-        height: 100%;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        box-sizing: border-box;
         background-size: var(--bgsize, 0.28rem) var(--bgsize, 0.28rem);
         }
 
-        .box::before {
-        top: 0;
-        left: 0;
-        background: white;
-        z-index: -1;
-        }
+    .box::before {
+    /* inner white background that sits flush with the box */
+    inset: 0;
+    box-sizing: border-box;
+    background: white;
+    z-index: -1;
+    }
 
         /* === Gambar === */
     .box img {
@@ -734,6 +760,38 @@
     margin: 0 0 0.15rem 0;
     padding: 0;
     }
+
+    /* === FIX agar tampilan tidak bisa digeser (horizontal scroll) === */
+html, body {
+    overflow-x: hidden !important; /* cegah geser horizontal */
+    width: 100%;
+    max-width: 100%;
+}
+
+/* pastikan semua elemen tidak keluar dari viewport */
+* {
+    box-sizing: border-box;
+}
+
+/* kadang ada container bootstrap yang melebihi layar — ini mencegahnya */
+.container,
+.row,
+.col-md-6,
+.card-list,
+.hero,
+.about,
+.kontak {
+    overflow-x: hidden;
+}
+
+/* kalau masih bisa geser di mobile, tambahkan juga ini */
+@media (max-width: 768px) {
+    body {
+        position: relative;
+        overflow-x: hidden !important;
+    }
+}
+
 
     </style>
 </head>
