@@ -6,6 +6,86 @@
     </x-slot>
 
     <div class="bg">
+        <style>
+            @media (max-width: 768px) {
+                /* Main content responsive */
+                .row {
+                    display: block !important;
+                }
+                .col-md-6 {
+                    width: 100% !important;
+                    margin-bottom: 15px;
+                }
+                
+                /* Table in modal to card layout */
+                .modal-body table {
+                    border: 0;
+                }
+                .modal-body table thead {
+                    display: none;
+                }
+                .modal-body table tbody,
+                .modal-body table tfoot {
+                    display: block;
+                    width: 100%;
+                }
+                .modal-body table tbody tr {
+                    display: block;
+                    margin-bottom: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 10px;
+                    background-color: #fff;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .modal-body table tbody td {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    text-align: right;
+                    padding: 8px 10px !important;
+                    border-bottom: 1px solid #f0f0f0;
+                }
+                .modal-body table tbody td:last-child {
+                    border-bottom: none;
+                }
+                .modal-body table tbody td::before {
+                    content: attr(data-label);
+                    font-weight: bold;
+                    text-align: left;
+                    color: #800000;
+                    flex: 1;
+                }
+                
+                /* Footer total section */
+                .modal-body table tfoot tr {
+                    display: block;
+                    margin-top: 20px;
+                    padding: 15px;
+                    background-color: #f8f9fa;
+                    border-radius: 8px;
+                    border: 2px solid #800000;
+                }
+                .modal-body table tfoot th {
+                    display: block;
+                    text-align: center !important;
+                    padding: 5px 0 !important;
+                }
+                .modal-body table tfoot th:first-child {
+                    display: none;
+                }
+                .modal-body table tfoot th:nth-child(2) {
+                    font-size: 14px;
+                    color: #800000;
+                    margin-bottom: 5px;
+                }
+                .modal-body table tfoot th:nth-child(3) {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #800000;
+                }
+            }
+        </style>
         <div class="py-12 bg-grey min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <x-partials.card>
@@ -81,11 +161,11 @@
                     <tbody>
                         @foreach($detail_gaji_pegawais as $key => $detail_gaji_pegawai)
                             <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $detail_gaji_pegawai->nama_pekerjaan }}</td>
-                                <td>{{ $detail_gaji_pegawai->total_jumlah_kegiatan }}</td>
-                                <td>{{ IDR($detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
-                                <td>{{ IDR($detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
+                                <td data-label="Nomor">{{ $key + 1 }}</td>
+                                <td data-label="Nama Kegiatan">{{ $detail_gaji_pegawai->nama_pekerjaan }}</td>
+                                <td data-label="Jumlah Kegiatan Selesai">{{ $detail_gaji_pegawai->total_jumlah_kegiatan }}</td>
+                                <td data-label="Gaji Per Pekerjaan">{{ IDR($detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
+                                <td data-label="Total Gaji">{{ IDR($detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

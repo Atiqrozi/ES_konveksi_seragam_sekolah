@@ -161,9 +161,16 @@ class PesananController extends Controller
 
             $data = $request->validated();
 
-            // Clean price format
+            // Ensure arrays exist to avoid undefined index errors
+            $data['harga'] = $data['harga'] ?? [];
+            $data['produk_id'] = $data['produk_id'] ?? [];
+            $data['ukuran'] = $data['ukuran'] ?? [];
+            $data['jumlah_pesanan'] = $data['jumlah_pesanan'] ?? [];
+
+            // Clean price format (defensive)
             foreach ($data['harga'] as $index => $harga) {
-                $data['harga'][$index] = str_replace(['Rp ', '.', ','], '', $harga);
+                $clean = is_string($harga) ? str_replace(['Rp ', '.', ','], '', $harga) : $harga;
+                $data['harga'][$index] = $clean;
             }
 
             // Create invoice
@@ -379,10 +386,17 @@ class PesananController extends Controller
     {
         $total_subtotal = 0;
 
-        foreach ($data['produk_id'] as $index => $produk_id) {
-            $ukuran = $data['ukuran'][$index];
-            $jumlah_pesanan = $data['jumlah_pesanan'][$index] ?? 0;
-            $harga = $data['harga'][$index];
+        // Guard: arrays must be present and have matching lengths
+        $count = count($data['produk_id'] ?? []);
+        for ($index = 0; $index < $count; $index++) {
+            $produk_id = $data['produk_id'][$index] ?? null;
+            $ukuran = $data['ukuran'][$index] ?? null;
+            $jumlah_pesanan = isset($data['jumlah_pesanan'][$index]) ? intval($data['jumlah_pesanan'][$index]) : 0;
+            $harga = $data['harga'][$index] ?? 0;
+
+            if (!$produk_id) {
+                continue; // skip invalid row
+            }
 
             // Validate stock
             $ukuran_produk = UkuranProduk::where('produk_id', $produk_id)
@@ -390,7 +404,8 @@ class PesananController extends Controller
                 ->first();
 
             if (!$ukuran_produk || $ukuran_produk->stok < $jumlah_pesanan) {
-                throw new \Exception("Stok tidak cukup untuk {$ukuran_produk->produk->nama_produk} ukuran {$ukuran}");
+                $productName = $ukuran_produk && $ukuran_produk->produk ? $ukuran_produk->produk->nama_produk : 'Produk tidak dikenal';
+                throw new \Exception("Stok tidak cukup untuk {$productName} ukuran {$ukuran}");
             }
 
             // Create order item

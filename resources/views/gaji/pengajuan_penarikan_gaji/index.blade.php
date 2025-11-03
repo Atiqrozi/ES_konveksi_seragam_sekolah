@@ -22,7 +22,7 @@
                             Gaji Tersedia
                         </h5>
                         <span>{{ IDR($gaji_pegawai->total_gaji_yang_bisa_diajukan) ?? '-' }}</span>
-                        <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#exampleModal" style="background-color: #800000; border:black 0; padding: ;"><i class="fa-solid fa-eye"></i></button>
+                        <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#exampleModal" style="background-color: #800000; border:black 0;"><i class="fa-solid fa-eye"></i></button>
                     </div>
 
                     <div class="mb-4">
@@ -50,6 +50,94 @@
     </div>
 
     <div class="py-12 min-h-screen">
+        <style>
+            @media (max-width: 768px) {
+                .py-12.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+                .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+                .flex.flex-wrap.justify-between { flex-direction: column !important; gap: 12px; }
+                .flex.flex-wrap.justify-between > .md\:w-1\/2 { width: 100% !important; }
+                .flex.customers-center.w-full { flex-wrap: wrap; gap: 6px; }
+                .flex.customers-center.w-full .ml-1 { margin-left: 6px !important; }
+                .md\:w-1\/2.text-right { text-align: left !important; display: flex !important; flex-direction: column !important; gap: 10px !important; width: 100% !important; }
+                .md\:w-1\/2.text-right a.button { width: 100% !important; text-align: center !important; justify-content: center !important; display: inline-flex !important; align-items: center !important; }
+                .block.w-full.overflow-auto { padding: 0; overflow-x: hidden !important; }
+                .block.w-full.overflow-auto table { display: block; width: 100%; }
+                .block.w-full.overflow-auto thead { display: none; }
+                .block.w-full.overflow-auto tbody { display: block; }
+                .block.w-full.overflow-auto tbody tr { display: block; border: 1px solid #e5e7eb; margin-bottom: 16px; padding: 12px; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                .block.w-full.overflow-auto tbody tr td { display: block !important; padding: 8px 0 !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box; border-bottom: 1px solid #f3f4f6; text-align: left !important; }
+                .block.w-full.overflow-auto tbody tr td:last-child { border-bottom: none; }
+                .block.w-full.overflow-auto tbody tr td[data-label]::before { content: attr(data-label); display: block; font-weight: 600; color: #800000; margin-bottom: 4px; font-size: 0.875rem; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] { text-align: center !important; padding-top: 12px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div { display: flex !important; justify-content: center !important; align-items: center !important; gap: 8px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button { min-width: 40px !important; height: 40px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 { margin-right: 0 !important; }
+                .mt-10.px-4 { margin-top: 12px !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+                
+                /* Modal table responsive */
+                .modal-body table tbody,
+                .modal-body table tfoot {
+                    display: block;
+                    width: 100%;
+                }
+                .modal-body table tbody tr {
+                    display: block;
+                    margin-bottom: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 10px;
+                    background-color: #fff;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .modal-body table tbody td {
+                    display: block !important;
+                    padding: 8px 0 !important;
+                    width: 100% !important;
+                    box-sizing: border-box;
+                    border-bottom: 1px solid #f0f0f0;
+                    text-align: left !important;
+                }
+                .modal-body table tbody td:last-child {
+                    border-bottom: none;
+                }
+                .modal-body table tbody td::before {
+                    content: attr(data-label);
+                    display: block;
+                    font-weight: 600;
+                    color: #800000;
+                    margin-bottom: 4px;
+                    font-size: 0.875rem;
+                }
+                
+                /* Footer total section in modal */
+                .modal-body table tfoot tr {
+                    display: block;
+                    margin-top: 20px;
+                    padding: 15px;
+                    background-color: #f8f9fa;
+                    border-radius: 8px;
+                    border: 2px solid #800000;
+                }
+                .modal-body table tfoot th {
+                    display: block;
+                    text-align: center !important;
+                    padding: 5px 0 !important;
+                }
+                .modal-body table tfoot th:first-child {
+                    display: none;
+                }
+                .modal-body table tfoot th:nth-child(2) {
+                    font-size: 14px;
+                    color: #800000;
+                    margin-bottom: 5px;
+                }
+                .modal-body table tfoot th:nth-child(3) {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #800000;
+                }
+            }
+        </style>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-partials.card> 
                 <div class="mb-5 mt-4">
@@ -133,16 +221,16 @@
                         <tbody class="text-gray-600">
                             @forelse($pengajuan_penarikan_gajis as $key => $pengajuan_penarikan_gaji)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="No">
                                     {{ $pengajuan_penarikan_gajis->firstItem() + $key }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Nama Pegawai">
                                     {{ $pengajuan_penarikan_gaji->user->nama ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Gaji Ditarik">
                                     {{ IDR($pengajuan_penarikan_gaji->gaji_yang_diajukan) ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="status">
                                     @if ($pengajuan_penarikan_gaji->status == 'Diajukan')
                                         <div
                                             style="min-width: 80px;"
@@ -187,14 +275,13 @@
                                         </div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Terhitung Tanggal">
                                     {{ $pengajuan_penarikan_gaji->mulai_tanggal ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Sampai Tanggal">
                                     {{ $pengajuan_penarikan_gaji->akhir_tanggal ?? '-' }}
                                 </td>
-                                </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('view', $pengajuan_penarikan_gaji)
                                             <a href="{{ route('pengajuan_penarikan_gaji.show', $pengajuan_penarikan_gaji) }}" class="mr-1">
@@ -205,7 +292,7 @@
                                         @endcan
                                         @if ($pengajuan_penarikan_gaji->status == 'Diajukan')
                                             @can('delete', $pengajuan_penarikan_gaji)
-                                                <form id="deleteForm" action="{{ route('pengajuan_penarikan_gaji.destroy', $pengajuan_penarikan_gaji->id) }}" method="POST">
+                                                <form id="deleteForm-{{ $pengajuan_penarikan_gaji->id }}" action="{{ route('pengajuan_penarikan_gaji.destroy', $pengajuan_penarikan_gaji->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
@@ -274,8 +361,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika konfirmasi, submit formulir secara manual
-                    document.getElementById('deleteForm').action = '{{ route('pengajuan_penarikan_gaji.destroy', '') }}/' + ajuanId;
-                    document.getElementById('deleteForm').submit();
+                    document.getElementById('deleteForm-' + ajuanId).submit();
                 }
             });
         }
@@ -326,11 +412,11 @@
                     <tbody>
                         @foreach($detail_gaji_pegawais as $key => $detail_gaji_pegawai)
                             <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $detail_gaji_pegawai->nama_pekerjaan }}</td>
-                                <td>{{ $detail_gaji_pegawai->total_jumlah_kegiatan }}</td>
-                                <td>{{ IDR($detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
-                                <td>{{ IDR($detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
+                                <td data-label="Nomor">{{ $key + 1 }}</td>
+                                <td data-label="Nama Kegiatan">{{ $detail_gaji_pegawai->nama_pekerjaan }}</td>
+                                <td data-label="Jumlah Kegiatan Selesai">{{ $detail_gaji_pegawai->total_jumlah_kegiatan }}</td>
+                                <td data-label="Gaji Per Pekerjaan">{{ IDR($detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
+                                <td data-label="Total Gaji">{{ IDR($detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -6,13 +6,38 @@
     </x-slot>
 
     <div class="py-12 min-h-screen">
+        <style>
+            @media (max-width: 768px) {
+                .py-12.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+                .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+                .flex.flex-wrap.justify-between { flex-direction: column !important; gap: 12px; }
+                .flex.flex-wrap.justify-between > .md\:w-1\/2 { width: 100% !important; }
+                .flex.items-center.w-full { flex-wrap: wrap; gap: 6px; }
+                .flex.items-center.w-full .ml-1 { margin-left: 6px !important; }
+                .md\:w-1\/2.text-right { text-align: left !important; display: flex !important; flex-direction: column !important; gap: 10px !important; width: 100% !important; }
+                .md\:w-1\/2.text-right a.button { width: 100% !important; text-align: center !important; justify-content: center !important; display: inline-flex !important; align-items: center !important; }
+                .block.w-full.overflow-auto { padding: 0; overflow-x: hidden !important; }
+                .block.w-full.overflow-auto table { display: block; width: 100%; }
+                .block.w-full.overflow-auto thead { display: none; }
+                .block.w-full.overflow-auto tbody { display: block; }
+                .block.w-full.overflow-auto tbody tr { display: block; border: 1px solid #e5e7eb; margin-bottom: 16px; padding: 12px; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                .block.w-full.overflow-auto tbody tr td { display: block !important; padding: 8px 0 !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box; border-bottom: 1px solid #f3f4f6; text-align: left !important; }
+                .block.w-full.overflow-auto tbody tr td:last-child { border-bottom: none; }
+                .block.w-full.overflow-auto tbody tr td[data-label]::before { content: attr(data-label); display: block; font-weight: 600; color: #800000; margin-bottom: 4px; font-size: 0.875rem; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] { text-align: center !important; padding-top: 12px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div { display: flex !important; justify-content: center !important; align-items: center !important; gap: 8px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button { min-width: 40px !important; height: 40px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 { margin-right: 0 !important; }
+                .mt-10.px-4 { margin-top: 12px !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            }
+        </style>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-partials.card> 
                 <div class="mb-5 mt-4">
                     <div class="flex flex-wrap justify-between">
                         <div class="md:w-1/2">
                             <form>
-                                <div class="flex customers-center w-full">
+                                <div class="flex items-center w-full">
                                     <x-inputs.text name="search" value="{{ $search ?? '' }}" placeholder="{{ __('crud.common.search') }}" autocomplete="off"></x-inputs.text>
 
                                     <div class="ml-1">
@@ -22,7 +47,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex customers-center w-full mt-2 mb-2">
+                                <div class="flex items-center w-full mt-2 mb-2">
                                     <span style="color: rgb(88, 88, 88);">
                                         &nbsp; Menampilkan &nbsp;
                                     </span>
@@ -87,20 +112,20 @@
                         <tbody class="text-gray-600">
                             @forelse($gaji_semua_pegawais as $key => $gaji_semua_pegawai)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="No">
                                     {{ $gaji_semua_pegawais->firstItem() + $key }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Nama Pegawai">
                                     {{ $gaji_semua_pegawai->user->nama ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Gaji Tersedia">
                                     {{ IDR($gaji_semua_pegawai->total_gaji_yang_bisa_diajukan) ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Terhitung Tanggal">
                                     {{ $gaji_semua_pegawai->terhitung_tanggal ?? '-' }}
                                 </td>
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('view', $gaji_semua_pegawai)
                                             <a href="{{ route('gaji_semua_pegawai.show', $gaji_semua_pegawai) }}" class="mr-1">

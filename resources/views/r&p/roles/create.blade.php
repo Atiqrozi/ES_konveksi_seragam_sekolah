@@ -6,6 +6,23 @@
     </x-slot>
 
     <div class="bg">
+        <style>
+            @media (max-width: 768px) {
+                .mt-10 {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .mt-10 a,
+                .mt-10 button {
+                    width: 100%;
+                    text-align: center;
+                }
+                .mt-10 .float-right {
+                    float: none !important;
+                }
+            }
+        </style>
         <div class="py-12 bg-grey min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <x-partials.card>

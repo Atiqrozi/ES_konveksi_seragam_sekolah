@@ -9,6 +9,29 @@
         .text-red-600 {
             display: none;
         }
+        @media (max-width: 768px) {
+            .py-12.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+            .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .flex.flex-wrap.justify-between { flex-direction: column !important; gap: 12px; }
+            .flex.flex-wrap.justify-between > .md\:w-1\/2 { width: 100% !important; }
+            .flex.items-center.w-full { flex-wrap: wrap; gap: 6px; }
+            .flex.items-center.w-full .ml-1 { margin-left: 6px !important; }
+            .md\:w-1\/2.text-right { text-align: left !important; display: flex !important; flex-direction: column !important; gap: 10px !important; width: 100% !important; }
+            .md\:w-1\/2.text-right a.button { width: 100% !important; text-align: center !important; justify-content: center !important; display: inline-flex !important; align-items: center !important; }
+            .block.w-full.overflow-auto { padding: 0; overflow-x: hidden !important; }
+            .block.w-full.overflow-auto table { display: block; width: 100%; }
+            .block.w-full.overflow-auto thead { display: none; }
+            .block.w-full.overflow-auto tbody { display: block; }
+            .block.w-full.overflow-auto tbody tr { display: block; border: 1px solid #e5e7eb; margin-bottom: 16px; padding: 12px; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+            .block.w-full.overflow-auto tbody tr td { display: block !important; padding: 8px 0 !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box; border-bottom: 1px solid #f3f4f6; text-align: left !important; }
+            .block.w-full.overflow-auto tbody tr td:last-child { border-bottom: none; }
+            .block.w-full.overflow-auto tbody tr td[data-label]::before { content: attr(data-label); display: block; font-weight: 600; color: #800000; margin-bottom: 4px; font-size: 0.875rem; }
+            .block.w-full.overflow-auto tbody tr td[data-label="Action"] { text-align: center !important; padding-top: 12px !important; }
+            .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div { display: flex !important; justify-content: center !important; align-items: center !important; gap: 8px !important; }
+            .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button { min-width: 40px !important; height: 40px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+            .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 { margin-right: 0 !important; }
+            .mt-10.px-4 { margin-top: 12px !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+        }
     </style>
 
     <div class="py-12 min-h-screen">
@@ -144,23 +167,23 @@
                         <tbody class="text-gray-600">
                             @forelse($invoices as $key => $invoice)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="No">
                                     {{ $invoices->firstItem() + $key }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Invoice">
                                     {{ $invoice->invoice ?? '-'}}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Customer">
                                     {{ optional($invoice->user)->nama ?? '-'}}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Total Transaksi">
                                     {{ IDR($invoice->sub_total) ?? '-'}}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Tanggal">
                                     {{ $invoice->created_at ?? '-'}}
                                 </td>
                                 
-                                <td class="px-4 py-3 text-center" style="width: 134px;">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                        
                                         @can('view', $invoice)
@@ -180,7 +203,7 @@
                                         @endcan
 
                                         @can('delete', $invoice)
-                                            <form id="deleteForm" action="{{ route('invoice.destroy', $invoice->id) }}" method="POST">
+                                            <form id="deleteForm{{ $invoice->id }}" action="{{ route('invoice.destroy', $invoice->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
@@ -229,9 +252,8 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Jika konfirmasi, submit formulir secara manual
-                    document.getElementById('deleteForm').action = '{{ route('invoice.destroy', '') }}/' + produkId;
-                    document.getElementById('deleteForm').submit();
+                    // Jika konfirmasi, submit formulir yang id-nya mengandung id pesanan
+                    document.getElementById('deleteForm' + produkId).submit();
                 }
             });
         }
