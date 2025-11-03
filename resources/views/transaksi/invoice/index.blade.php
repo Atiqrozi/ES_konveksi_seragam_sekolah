@@ -48,13 +48,6 @@
                                         :value="$start_date ?? ''">
                                     </x-inputs.basic>
 
-                                    <x-inputs.basic 
-                                        type="date" 
-                                        id="end_date" 
-                                        :name="'end_date'" 
-                                        :value="$end_date ?? ''">
-                                    </x-inputs.basic>
-
                                     @unless(auth()->user()->hasRole('Sales'))
                                         <div class="flex items-center w-full ml-3">
                                             <x-inputs.select name="customer_input" id="customer_input" class="form-select" style="width: 150px" onchange="this.form.submit()">

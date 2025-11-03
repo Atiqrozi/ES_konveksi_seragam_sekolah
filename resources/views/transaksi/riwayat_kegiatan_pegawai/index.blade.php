@@ -35,13 +35,6 @@
                                         :name="'start_date'" 
                                         :value="$start_date ?? ''">
                                     </x-inputs.basic>
-
-                                    <x-inputs.basic 
-                                        type="date" 
-                                        id="end_date" 
-                                        :name="'end_date'" 
-                                        :value="$end_date ?? ''">
-                                    </x-inputs.basic>
                                 </div>
                                 <div class="flex items-center w-1/2 mt-2">
                                     @if ($errors->has('end_date'))
