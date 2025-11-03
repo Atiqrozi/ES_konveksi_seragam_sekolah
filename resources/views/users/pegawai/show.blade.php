@@ -192,11 +192,11 @@
                         @foreach($kegiatans as $key => $kegiatan)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $kegiatan->item->nama_item }}</td>
-                                <td>{{ $kegiatan->jumlah_kegiatan }}</td>
-                                <td>{{ IDR($kegiatan->item->gaji_per_item) }}</td>
-                                <td>{{ IDR($kegiatan->jumlah_kegiatan * $kegiatan->item->gaji_per_item) }}</td>
-                                <td>{{ $kegiatan->kegiatan_dibuat }}</td>
+                                <td>{{ $kegiatan->item->nama_item ?? '-' }}</td>
+                                <td>{{ $kegiatan->jumlah_kegiatan ?? '-' }}</td>
+                                <td>{{ $kegiatan->item ? IDR($kegiatan->item->gaji_per_item) : '-' }}</td>
+                                <td>{{ $kegiatan->item ? IDR($kegiatan->jumlah_kegiatan * $kegiatan->item->gaji_per_item) : '-' }}</td>
+                                <td>{{ $kegiatan->kegiatan_dibuat ?? '-' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

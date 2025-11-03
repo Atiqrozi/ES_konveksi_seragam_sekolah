@@ -25,6 +25,56 @@
         .icon {
             font-size: 35px;
         }
+
+        /* Mobile-specific layout fixes for diagram (only affects <=768px) */
+        @media (max-width: 768px) {
+            .py-12.min-h-screen {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+
+            .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+
+            .bg-slate {
+                padding: 15px 20px !important;
+            }
+
+            th {
+                font-size: 16px !important;
+                padding: 20px 0 !important;
+            }
+
+            td {
+                width: 100% !important;
+                padding: 15px !important;
+            }
+
+            .icon {
+                font-size: 28px !important;
+            }
+
+            .grid.grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+
+            table {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            table tr {
+                display: block !important;
+            }
+
+            table th,
+            table td {
+                display: block !important;
+            }
+        }
     </style>
 
     <div class="py-12 min-h-screen">

@@ -6,6 +6,44 @@
     </x-slot>
 
     <div class="bg">
+        <style>
+            /* Mobile-specific layout fixes for posisi lowongan show (only affects <=768px) */
+            @media (max-width: 768px) {
+                .py-12.bg-grey.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+                .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+                
+                .mt-4.px-4.row { padding-left: 0 !important; padding-right: 0 !important; }
+                .col-md-6 { width: 100% !important; max-width: 100% !important; }
+                
+                .mb-4 { margin-bottom: 1rem !important; }
+                .mb-4 h5 { 
+                    font-size: 14px !important;
+                    font-weight: 600 !important;
+                    color: #800000 !important;
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                .mb-4 span {
+                    font-size: 15px !important;
+                    word-wrap: break-word !important;
+                }
+                
+                .mt-10 { 
+                    margin-top: 1.5rem !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 10px !important;
+                }
+                
+                .mt-10 a.button {
+                    width: 100% !important;
+                    text-align: center !important;
+                    justify-content: center !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                }
+            }
+        </style>
         <div class="py-12 bg-grey min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <x-partials.card>
