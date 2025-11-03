@@ -1,4 +1,4 @@
-<x-form-section submit="updateProfileInformation">
+<x-form-section submit="updateProfileInformation" class="profile-form-mobile">
     <x-slot name="title">
         {{ __('Profile Information') }}
     </x-slot>
@@ -8,7 +8,18 @@
     </x-slot>
 
     <x-slot name="form">
-        <div class="col-span-6 sm:col-span-4">
+        <style>
+            /* Mobile-only: stack labels above inputs and make inputs full width */
+            @media (max-width: 768px) {
+                .profile-form-mobile { display:block !important; }
+                .profile-form-mobile .col-span-6 { width: 100% !important; display: block !important; grid-column: auto !important; }
+                .profile-form-mobile .sm\:col-span-4 { width: 100% !important; }
+                .profile-form-mobile label { display: block !important; margin-bottom: .35rem; font-size: 16px; color: #1f2937; }
+                .profile-form-mobile .block.mt-1 { width: 100% !important; box-sizing: border-box; }
+            }
+        </style>
+
+    <div class="col-span-6 sm:col-span-4">
             <x-label for="name" value="{{ __('Nama') }}" />
             <x-input id="name" type="text" class="block mt-1 w-full p-2 border rounded" wire:model.defer="state.nama" required autocomplete="name" readonly/>
             <x-input-error for="name" class="mt-2" />
@@ -55,6 +66,6 @@
                 <x-input id="tagihan" type="text" class="block mt-1 w-full p-2 border rounded" wire:model.defer="state.tagihan" required autocomplete="tagihan" readonly />
                 <x-input-error for="tagihan" class="mt-2" />
             </div>
-        @endrole
+    @endrole
     </x-slot>
 </x-form-section>

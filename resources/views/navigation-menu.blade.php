@@ -1,11 +1,73 @@
 @auth   
 <nav x-data="{ open: false }" class="bg-gray-100 border-b border-gray-200">
+    <style>
+        /* Compact admin header for mobile */
+        .nav-center-title { font-size: 16px; color: #1f2937; font-weight: 600; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            /* Reduce header height and logo size for mobile */
+            .nav-logo img { width: 50px !important; height: auto !important; }
+            .h-16 { min-height: 56px !important; height: 56px !important; }
+            
+            /* Hide all navigation links on mobile (they appear in hamburger menu instead) */
+            .flex > div.hidden.space-x-8 { display: none !important; }
+            
+            /* Center title container - takes remaining space between logo and hamburger */
+            .nav-center-container { 
+                display: flex !important; 
+                flex: 1 1 auto; 
+                align-items: center; 
+                justify-content: center;
+                padding: 0 8px;
+                overflow: hidden;
+            }
+            
+            .nav-center-title {
+                font-size: 15px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+            
+            /* Ensure hamburger menu button is visible and properly positioned */
+            .-mr-2.flex.items-center.sm\:hidden { 
+                display: flex !important;
+                margin-right: 0 !important;
+                padding-left: 8px;
+            }
+            
+            /* Fix dropdown positioning on mobile to prevent overflow */
+            .relative.inline-flex.align-middle {
+                position: relative;
+            }
+            
+            /* Adjust max-width container padding on mobile */
+            .max-w-7xl.mx-auto.px-4 {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
+            /* Ensure main flex container doesn't cause overflow */
+            .flex.justify-between.h-16 {
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }
+            
+            /* Left section (logo) - fixed width */
+            .flex.justify-between.h-16 > .flex:first-child {
+                flex-shrink: 0;
+                min-width: 0;
+            }
+        }
+    </style>
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                <div class="shrink-0 flex items-center nav-logo">
                     <a href="{{ route('menu') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="" style="width: 90px;">
                     </a>
@@ -191,6 +253,11 @@
                 @endcan
             </div> 
 
+            <!-- center title for mobile (hidden on sm+) -->
+            <div class="nav-center-container sm:hidden">
+                <a href="{{ route('menu') }}" class="nav-center-title">{{ __('Kembali ke Menu') }}</a>
+            </div>
+
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
@@ -310,27 +377,8 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('menu') }}" :active="request()->routeIs('menu')">
-                {{ __('Menu') }}
-            </x-responsive-nav-link>
-        </div>
-
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="flex items-center px-4">
-                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-                    <div class="shrink-0 mr-3">
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
-                    </div>
-                @endif
-
-                <div>
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                </div>
-            </div>
-
             <div class="mt-3 space-y-1">
                 <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">

@@ -5,6 +5,34 @@
         </h2>
     </x-slot>
 
+    <style>
+        /* Menu dashboard responsive styles (compact mobile) */
+        .judul_menu { font-size: 22px; font-weight: 700; letter-spacing: 2px; text-align: center; margin: 8px 0 6px; }
+        .menu-section-hr { height: 3px; background-color: #800000; width: 70px; margin: 0 auto 15px; }
+
+    /* Make table act like a flexible icon grid and center the table itself */
+    .table-auto { margin: 0 auto; width: auto; }
+    .table-auto tbody tr { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+    .table-auto td { display: flex; flex-direction: column; align-items: center; padding: 8px 6px; min-width: 84px; }
+
+        .ikon { background: #7f0e0e; color: #fff; display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+
+        @media (max-width: 768px) {
+            /* Reduce vertical whitespace on mobile */
+            .py-12.min-h-screen { padding-top: 10px; padding-bottom: 12px; min-height: auto; }
+
+            /* Make the card visually lighter on small screens */
+            .bg-white.overflow-hidden.sm\:rounded-lg { box-shadow: none; padding: 12px 8px; background: transparent; }
+
+            .table-auto { width: auto; }
+            .table-auto tbody tr { gap: 12px; }
+            .table-auto td { min-width: 64px; padding: 6px; }
+            .ikon { width: 60px; height: 60px; }
+            .judul_menu { font-size: 18px; }
+            .menu-section-hr { margin-bottom: 12px; }
+        }
+    </style>
+
     <div class="py-12 min-h-screen">
         <div class="mx-auto sm:px-6 lg:px-8" style="max-width: 1000px; margin-bottom: 40px;">
             <div class="bg-white overflow-hidden sm:rounded-lg" style="box-shadow: 0 0 15px rgb(185, 185, 185)">
