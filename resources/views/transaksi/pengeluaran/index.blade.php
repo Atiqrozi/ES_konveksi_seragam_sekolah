@@ -258,7 +258,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika konfirmasi, submit formulir secara manual
-                    document.getElementById('deleteForm').action = '{{ route('pengeluaran.destroy', '') }}/' + pengeluaranId;
+                    document.getElementById('deleteForm').action = "{{ route('pengeluaran.destroy', '') }}/" + pengeluaranId;
                     document.getElementById('deleteForm').submit();
                 }
             });

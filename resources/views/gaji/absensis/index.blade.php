@@ -156,7 +156,7 @@
                                             </a>
                                         @endcan
                                         @can('delete', $absensi)
-                                            <form id="deleteForm" action="{{ route('absensis.destroy', $absensi->id) }}" method="POST">
+                                            <form id="deleteForm-{{ $absensi->id }}" action="{{ route('absensis.destroy', $absensi->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
@@ -206,8 +206,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Jika konfirmasi, submit formulir secara manual
-                    document.getElementById('deleteForm').action = '{{ route('absensis.destroy', '') }}/' + absensiId;
-                    document.getElementById('deleteForm').submit();
+                    document.getElementById('deleteForm-' + absensiId).submit();
                 }
             });
         }
