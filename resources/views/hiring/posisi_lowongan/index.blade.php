@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            List Posisi Lowongan
+            Daftar Posisi Lowongan
         </h2>
     </x-slot>
 
@@ -68,19 +68,19 @@
                     font-size: 0.875rem;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
                     text-align: center !important;
                     padding-top: 12px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
                     display: flex !important;
                     justify-content: center !important;
                     align-items: center !important;
                     gap: 8px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] button.button {
                     min-width: 40px !important;
                     height: 40px !important;
                     display: inline-flex !important;
@@ -88,7 +88,7 @@
                     justify-content: center !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] a.mr-1 {
                     margin-right: 0 !important;
                 }
 
@@ -131,7 +131,7 @@
                         <div class="md:w-1/2 text-right">
                             <a href="{{ route('posisi_lowongan.export_pdf') }}" class="button" style="background-color: rgb(129, 129, 129); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(120, 120, 120)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(129, 129, 129)'; this.style.color='white';">
                                 <i class="mr-1 icon ion-md-download"></i>
-                                Pdf
+                                PDF
                             </a>
 
                             <a href="{{ route('posisi_lowongan.export_excel') }}" class="button" style="background-color: rgb(83, 138, 0); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(72, 121, 0)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(83, 138, 0)'; this.style.color='white';">
@@ -174,7 +174,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
@@ -190,7 +190,7 @@
                                 <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Deskripsi Posisi">
                                     {{ $posisi_lowongan->deskripsi_posisi ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('update', $posisi_lowongan)
                                             <a href="{{ route('posisi_lowongan.edit', $posisi_lowongan) }}" class="mr-1">

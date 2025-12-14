@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Show Pesanan
+            Lihat Pesanan
         </h2>
     </x-slot>
 
@@ -23,12 +23,12 @@
                                 <div class="action-buttons">
                                     <a href="{{ route('invoice.index') }}" class="button">
                                         <i class=" mr-1 icon ion-md-return-left text-primary"></i>
-                                        Back to Index
+                                        {{ __('Back to Index') }}
                                     </a>
 
                                     <a href="{{ route('pesanan.invoice_pdf', $invoice) }}" class="button" style="background-color: #800000; color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='#700000'; this.style.color='white';" onmouseout="this.style.backgroundColor='#800000'; this.style.color='white';">
                                         <i class="mr-1 icon ion-md-download"></i>
-                                        Export PDF
+                                        Ekspor PDF
                                     </a>
                                 </div>
                             </div>

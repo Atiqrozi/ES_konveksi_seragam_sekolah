@@ -4,7 +4,7 @@
     </x-slot>
 
     <x-slot name="description">
-        {{ __('Hanya admin yang dapat melakukan update profile, hubungi admin jika ada perubahan data.') }}
+        {{ __('Hanya admin yang dapat melakukan pembaruan profil, hubungi admin jika ada perubahan data.') }}
     </x-slot>
 
     <x-slot name="form">

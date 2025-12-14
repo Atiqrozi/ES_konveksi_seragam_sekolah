@@ -15,5 +15,10 @@ return [
 
     'previous' => '&laquo; Sebelumnya',
     'next' => 'Selanjutnya &raquo;',
+    'Pagination Navigation' => 'Navigasi Halaman',
+    'Showing' => 'Menampilkan',
+    'to' => 'hingga',
+    'of' => 'dari',
+    'results' => 'hasil',
 
 ];

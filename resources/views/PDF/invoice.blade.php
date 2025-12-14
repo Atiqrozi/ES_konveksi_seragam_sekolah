@@ -3,22 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice List - {{ now() }}</title>
+    <title>Invoice - {{ $invoice->invoice ?? '' }}</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 14px;
+            margin: 0;
+            padding: 20px;
         }
 
         table .invoice:nth-child(odd) {
             background-color: #fdf1f1;
         }
+        
+        img {
+            max-width: 80px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    @php
+        // Optimasi: hitung total di PHP untuk mengurangi loop
+        $total_subtotal = 0;
+        foreach($pesanans as $pesanan) {
+            if (isset($pesanan->jumlah_pesanan) && isset($pesanan->harga)) {
+                $total_subtotal += $pesanan->jumlah_pesanan * $pesanan->harga;
+            }
+        }
+    @endphp
     
-    <img src="{{ public_path('images/header.png') }}" style="max-width:100%">
+    @if(file_exists(public_path('favicon.png')))
+    <img src="{{ public_path('favicon.png') }}" alt="Logo">
+    @endif
     
     <div class="page-content container">
         <div class="container px-0">
@@ -28,36 +45,31 @@
                         <tr>
                             <td style="width:70%; height: 25px;">
                                 To :<span style="font-weight:bold; color:#800000; font-size: 16px;">
-                                    {{ $invoice->user->nama }}
+                                    {{ $invoice->user->nama ?? 'N/A' }}
                                 </span>
                             </td>
                             <td style="font-weight:bold;">Invoice</td>
                         </tr>
                         <tr>
-                            <td style="height: 25px;">{{ $invoice->user->alamat }}</td>
+                            <td style="height: 25px;">{{ $invoice->user->alamat ?? 'N/A' }}</td>
                             <td>
-                                <i class="fa fa-circle" style="color: #800000; font-size: 10px"></i>
                                 <span style="font-weight:bold;">ID :</span>
-                                {{ $invoice->invoice }}
+                                {{ $invoice->invoice ?? 'N/A' }}
                             </td>
                         </tr>
                         <tr>
-                            <td style="height: 25px;">{{ $invoice->user->email }}</td>
+                            <td style="height: 25px;">{{ $invoice->user->email ?? 'N/A' }}</td>
                             <td>
-                                <i class="fa fa-circle" style="color: #800000; font-size: 10px"></i>
                                 <span style="font-weight:bold;">Date :</span>
-                                {{ $invoice->created_at }}
+                                {{ $invoice->created_at ?? now() }}
                             </td>
                         </tr>
                         <tr>
                             <td style="height: 25px; font-weight:bold;">
-                                <i class="fa fa-phone fa-flip-horizontal" style="color: #800000; font-size: 10px"></i>
-                                {{ $invoice->user->no_telepon }}
+                                {{ $invoice->user->no_telepon ?? 'N/A' }}
                             </td>
                         </tr>
                     </table>
-
-                    
 
                     <div style="margin-top: 30px;">
                         <table style="width: 100%; border-collapse: collapse;">
@@ -69,22 +81,13 @@
                                 <th style="text-align: left; padding-left: 10px;">Harga Satuan</th>
                                 <th style="text-align: left; padding-left: 10px;">Total</th>
                             </tr>
-
-                            @php
-                                $total_subtotal = 0;
-                            @endphp
                             
                             @foreach($pesanans as $index => $pesanan)
                                 @if (isset($pesanan->jumlah_pesanan) && isset($pesanan->harga))
-                                    @php
-                                        $subtotal = $pesanan->jumlah_pesanan * $pesanan->harga;
-                                        $total_subtotal += $subtotal;
-                                    @endphp
-
                                     <tr class="invoice">
                                         <td style="height: 35px; padding-left: 10px;">{{ $index+1 }}</td>
-                                        <td style="padding-left: 10px;">{{ $pesanan->produk->nama_produk }}</td>
-                                        <td style="padding-left: 10px;">{{ $pesanan->ukuran }}</td>
+                                        <td style="padding-left: 10px;">{{ $pesanan->produk->nama_produk ?? 'N/A' }}</td>
+                                        <td style="padding-left: 10px;">{{ $pesanan->ukuran ?? 'N/A' }}</td>
                                         <td style="padding-left: 10px;">{{ $pesanan->jumlah_pesanan }}</td>
                                         <td style="padding-left: 10px;">{{ IDR($pesanan->harga) }}</td>
                                         <td style="padding-left: 10px;">{{ IDR($pesanan->jumlah_pesanan * $pesanan->harga) }}</td>
@@ -99,19 +102,19 @@
 
                             <tr>
                                 <td colspan="5" style="font-size: 16px; height: 40px; text-align: right;">Tagihan Sebelumnya</td>
-                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_sebelumnya) }}</td>
+                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_sebelumnya ?? 0) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="5" style="font-size: 16px; height: 40px; text-align: right;">Sub Total</td>
-                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_total) }}</td>
+                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_total ?? 0) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="5" style="font-size: 16px; height: 40px; text-align: right;">Jumlah Bayar</td>
-                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->jumlah_bayar) }}</td>
+                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->jumlah_bayar ?? 0) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="5" style="font-size: 16px; height: 40px; text-align: right;">Tagihan Sisa</td>
-                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_sisa) }}</td>
+                                <td style="padding-left: 10px; font-size: 16px; color:#800000;">{{ IDR($invoice->tagihan_sisa ?? 0) }}</td>
                             </tr>
                         </table>
                     </div>

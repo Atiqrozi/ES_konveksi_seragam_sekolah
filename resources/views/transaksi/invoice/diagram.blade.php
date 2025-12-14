@@ -79,7 +79,7 @@
                             </x-inputs.basic>
 
                             <button type="submit" class="button" style="background-color: #800000; color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='#700000'; this.style.color='white';" onmouseout="this.style.backgroundColor='#800000'; this.style.color='white';">
-                                Filter
+                                Saring
                             </button>
                         </div>
                     </form>

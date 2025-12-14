@@ -350,14 +350,14 @@ class PesananController extends Controller
 
             $pesanans = $invoice->pesanans;
 
-            $pdf = PDF::loadView('PDF.invoice', compact('invoice', 'pesanans'))
-                ->setPaper('a4', 'portrait');
+            // Menggunakan helper function untuk generate PDF dengan memory optimization
+            $pdf = createPdfWithOptions('PDF.invoice', compact('invoice', 'pesanans'));
 
             return $pdf->download('Invoice_' . $invoice->invoice . '_' . now()->format('Y-m-d_H-i-s') . '.pdf');
 
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat membuat PDF invoice!');
+                ->with('error', 'Terjadi kesalahan saat membuat PDF invoice: ' . $e->getMessage());
         }
     }
 

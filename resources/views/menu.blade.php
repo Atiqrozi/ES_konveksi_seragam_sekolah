@@ -105,7 +105,7 @@
                         <thead>
                             <tr>
                                 <th colspan="10" style="text-align: center;">
-                                    <div class="judul_menu">HIRING</div>
+                                    <div class="judul_menu">PEREKRUTAN</div>
                                     <div style="height: 2px;
                                     background-color:#800000;
                                     width: 70px;

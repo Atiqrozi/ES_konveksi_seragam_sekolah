@@ -35,10 +35,10 @@
                     Tanggal Lahir
                 </th>
                 <th style="padding: 10px; text-align: center;">
-                    Created At
+                    Dibuat Pada
                 </th>
                 <th style="padding: 10px; text-align: center;">
-                    Updated At
+                    Diperbarui Pada
                 </th>
             </tr>
         </thead>

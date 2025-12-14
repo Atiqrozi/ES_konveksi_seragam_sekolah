@@ -3,6 +3,9 @@
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
+// Increase memory limit untuk mencegah error saat generate PDF
+ini_set('memory_limit', '512M');
+
 define('LARAVEL_START', microtime(true));
 
 /*

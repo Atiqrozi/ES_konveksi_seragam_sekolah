@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Show Calon Mitra
+            Lihat Calon Mitra
         </h2>
     </x-slot>
 
@@ -42,7 +42,7 @@
 
                             <div class="mb-4">
                                 <h5 class="font-medium text-gray-700">
-                                    Created At
+                                    Dibuat Pada
                                 </h5>
                                 <span>{{ $calon_mitra->created_at ?? '-' }}</span>
                             </div>

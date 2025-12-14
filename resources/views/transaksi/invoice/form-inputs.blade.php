@@ -129,7 +129,7 @@
                 class="tambah-produk-button"
                 onclick="addProduk()"
             >
-                + Tambah Produk
+                + Buat Baru Produk
             </button>
 
             <div style="display: flex; align-items: center;">

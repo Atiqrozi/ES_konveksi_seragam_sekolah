@@ -28,10 +28,10 @@
                     Gaji Per Produk
                 </th>
                 <th style="padding: 10px; text-align: center; min-width: 100px;">
-                    Created At
+                    Dibuat Pada
                 </th>
                 <th style="padding: 10px; text-align: center; min-width: 100px;">
-                    Updated At
+                    Diperbarui Pada
                 </th>
             </tr>
         </thead>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         @auth
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Create Pelamar
+            Tambah Pelamar
         </h2>
         @endauth
 

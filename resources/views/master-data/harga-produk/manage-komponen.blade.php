@@ -179,7 +179,7 @@
                     <div class="mt-6 flex justify-between">
                         <a href="{{ route('harga-produk.index') }}" class="button">
                             <i class="mr-1 icon ion-md-return-left text-primary"></i>
-                            Kembali ke Daftar Harga
+                            Kembali
                         </a>
 
                         @if($produk->produkKomponens->count() > 0)
@@ -189,7 +189,7 @@
                             <button type="submit" class="button bg-green-500 hover:bg-green-600" 
                                     onclick="return confirm('Apakah Anda yakin ingin memperbarui harga produk berdasarkan komponen?')">
                                 <i class="mr-1 icon ion-md-refresh"></i>
-                                Update Harga Produk
+                                Perbarui Harga Produk
                             </button>
                         </form>
                         @endif

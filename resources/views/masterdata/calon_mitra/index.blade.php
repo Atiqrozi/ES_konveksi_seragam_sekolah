@@ -24,10 +24,10 @@
                 .block.w-full.overflow-auto tbody tr td { display: block !important; padding: 8px 0 !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box; border-bottom: 1px solid #f3f4f6; text-align: left !important; }
                 .block.w-full.overflow-auto tbody tr td:last-child { border-bottom: none; }
                 .block.w-full.overflow-auto tbody tr td[data-label]::before { content: attr(data-label); display: block; font-weight: 600; color: #800000; margin-bottom: 4px; font-size: 0.875rem; }
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] { text-align: center !important; padding-top: 12px !important; }
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div { display: flex !important; justify-content: center !important; align-items: center !important; gap: 8px !important; }
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button { min-width: 40px !important; height: 40px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 { margin-right: 0 !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] { text-align: center !important; padding-top: 12px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div { display: flex !important; justify-content: center !important; align-items: center !important; gap: 8px !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] button.button { min-width: 40px !important; height: 40px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] a.mr-1 { margin-right: 0 !important; }
                 .mt-10.px-4 { margin-top: 12px !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
             }
         </style>
@@ -67,7 +67,7 @@
                         <div class="md:w-1/2 text-right">
                             <a href="{{ route('calon_mitra.export_pdf') }}" class="button" style="background-color: rgb(129, 129, 129); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(120, 120, 120)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(129, 129, 129)'; this.style.color='white';">
                                 <i class="mr-1 icon ion-md-download"></i>
-                                Pdf
+                                PDF
                             </a>
 
                             <a href="{{ route('calon_mitra.export_excel') }}" class="button" style="background-color: rgb(83, 138, 0); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(72, 121, 0)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(83, 138, 0)'; this.style.color='white';">
@@ -88,7 +88,7 @@
                                         'nama' => 'Nama',
                                         'nomor_wa' => 'Nomor Whatsapp',
                                         'alamat' => 'Alamat',
-                                        'created_at' => 'Created At',
+                                        'created_at' => 'Dibuat Pada',
                                     ];
                                 @endphp
                                 @foreach($columns as $field => $label)
@@ -106,7 +106,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>

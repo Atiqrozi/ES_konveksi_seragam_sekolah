@@ -62,12 +62,12 @@
                 }
                 
                 /* Make action buttons display inline and centered */
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
                     text-align: center !important;
                     padding-top: 12px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
                     display: flex !important;
                     justify-content: center !important;
                     gap: 8px !important;
@@ -116,7 +116,7 @@
                         <div class="md:w-1/2 text-right">
                             <a href="{{ route('pegawai.export_pdf') }}" class="button" style="background-color: rgb(129, 129, 129); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(120, 120, 120)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(129, 129, 129)'; this.style.color='white';">
                                 <i class="mr-1 icon ion-md-download"></i>
-                                Pdf
+                                PDF
                             </a>
 
                             <a href="{{ route('pegawai.export_excel') }}" class="button" style="background-color: rgb(83, 138, 0); color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='rgb(72, 121, 0)'; this.style.color='white';" onmouseout="this.style.backgroundColor='rgb(83, 138, 0)'; this.style.color='white';">
@@ -144,7 +144,7 @@
                                         'nama' => 'Nama',
                                         'email' => 'Email',
                                         'tanggal_lahir' => 'Tanggal Lahir',
-                                        'updated_at' => 'Updated At'
+                                        'updated_at' => 'Diperbarui Pada'
                                     ];
                                 @endphp
                                 @foreach($columns as $field => $label)
@@ -162,7 +162,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
@@ -181,10 +181,10 @@
                                 <td class="px-4 py-3 text-left" data-label="Tanggal Lahir">
                                     {{ optional($pegawai->tanggal_lahir)->format('Y-m-d') ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" data-label="Updated At">
+                                <td class="px-4 py-3 text-left" data-label="Diperbarui Pada">
                                     {{ $pegawai->updated_at ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('update_pegawai', $pegawai)
                                             <a href="{{ route('pegawai.edit', $pegawai) }}" class="mr-1">

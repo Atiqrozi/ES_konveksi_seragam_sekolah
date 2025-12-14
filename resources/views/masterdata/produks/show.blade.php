@@ -35,12 +35,12 @@
 
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <h5 class="font-medium text-gray-700">Created At</h5>
+                                <h5 class="font-medium text-gray-700">Dibuat Pada</h5>
                                 <span>{{ $produk->created_at ?? '-' }}</span>
                             </div>
 
                             <div class="mb-4">
-                                <h5 class="font-medium text-gray-700">Updated At</h5>
+                                <h5 class="font-medium text-gray-700">Diperbarui Pada</h5>
                                 <span>{{ $produk->updated_at ?? '-' }}</span>
                             </div>
                         </div>

@@ -837,7 +837,7 @@ html, body {
             <!-- Bagian Kualitas Tetap Terjaga -->
             <div class="col-md-6">
                 <div class="box image_1">
-                    <img src="{{ asset('images/tentang_kami_1.jpg') }}" alt="About Image 1">
+                    <img src="{{ asset('images/tentang_kami_1.jpg') }}" alt="Gambar Tentang Kami 1">
                     <h2>Kualitas Produk Terjamin Terjaga</h2>
                     <p>
                         Walau memiliki banyak pekerja dan mampu menyelesaikan pekerjaan dengan cepat, 
@@ -852,7 +852,7 @@ html, body {
             <!-- Bagian Pekerja yang Banyak -->
             <div class="col-md-6">
                 <div class="box image_2">
-                    <img src="{{ asset('images/tentang_kami_2.jpg') }}" alt="About Image 2">
+                    <img src="{{ asset('images/tentang_kami_2.jpg') }}" alt="Gambar Tentang Kami 2">
                     <h2>Tenaga kerja Yang Berkompeten</h2>
                     <p>
                         Agung's Collection dikenal sebagai salah satu industri tekstil dan garmen yang 
@@ -1012,7 +1012,7 @@ html, body {
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Agung's Collection. All rights reserved.</p>
+            <p>&copy; 2024 Agung's Collection. Hak cipta dilindungi.</p>
         </div>
     </footer>
 

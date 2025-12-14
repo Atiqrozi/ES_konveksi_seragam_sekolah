@@ -26,7 +26,7 @@
                     Alamat
                 </th>
                 <th style="padding: 10px; text-align: center;">
-                    Created At
+                    Dibuat Pada
                 </th>
             </tr>
         </thead>

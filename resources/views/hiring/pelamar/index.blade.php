@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Pelamar List
+            Daftar Pelamar
         </h2>
     </x-slot>
 
@@ -37,7 +37,7 @@
 
     <div class="py-12 min-h-screen">
         <style>
-            /* Mobile-specific layout fixes for pelamar list (only affects <=768px) */
+            /* Mobile-specific layout fixes for Daftar Pelamar (only affects <=768px) */
             @media (max-width: 768px) {
                 /* Reduce page padding on mobile */
                 .py-12.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
@@ -100,12 +100,12 @@
                 }
                 
                 /* Make action buttons display inline and centered */
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
                     text-align: center !important;
                     padding-top: 12px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
                     display: flex !important;
                     justify-content: center !important;
                     gap: 8px !important;
@@ -205,7 +205,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
@@ -307,7 +307,7 @@
                                     -
                                     {{ ($pelamar->selesai_wawancara instanceof \DateTime ? $pelamar->selesai_wawancara->format('H:i') : '-') }}
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @if ($pelamar->status == 'Sudah Wawancara')
                                             @can('update', $pelamar)

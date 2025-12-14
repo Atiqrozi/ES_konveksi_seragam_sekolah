@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit Komponen
+            Ubah Komponen
         </h2>
     </x-slot>
 
@@ -26,7 +26,7 @@
                         <a href="{{ route('komponen.index') }}" class="mr-4">
                             <i class="mr-1 icon ion-md-arrow-back"></i>
                         </a>
-                        Edit Komponen: {{ $komponen->nama_komponen }}
+                        Ubah Komponen: {{ $komponen->nama_komponen }}
                     </x-slot>
 
                     <x-form method="PUT" action="{{ route('komponen.update', $komponen) }}" class="mt-4">

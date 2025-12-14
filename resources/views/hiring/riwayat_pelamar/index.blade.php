@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Riwayat Pelamar List
+            Riwayat Daftar Pelamar
         </h2>
     </x-slot>
 
     <div class="py-12 min-h-screen">
         <style>
-            /* Mobile-specific layout fixes for riwayat pelamar list (only affects <=768px) */
+            /* Mobile-specific layout fixes for riwayat Daftar Pelamar (only affects <=768px) */
             @media (max-width: 768px) {
                 .py-12.min-h-screen { padding-top: 1rem !important; padding-bottom: 1rem !important; }
                 .max-w-7xl.mx-auto.sm\:px-6.lg\:px-8 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
@@ -60,12 +60,12 @@
                     margin-top: 4px;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
                     text-align: center !important;
                     padding-top: 12px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
                     display: flex !important;
                     justify-content: center !important;
                     gap: 8px !important;
@@ -147,7 +147,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
@@ -249,7 +249,7 @@
                                     -
                                     {{ ($riwayat_pelamar->selesai_wawancara instanceof \DateTime ? $riwayat_pelamar->selesai_wawancara->format('H:i') : '-') }}
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('view_riwayat_pelamar', $riwayat_pelamar)
                                             <a href="{{ route('riwayat_pelamar.show', $riwayat_pelamar) }}" class="mr-1">

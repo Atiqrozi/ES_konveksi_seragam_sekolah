@@ -63,14 +63,14 @@
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <h5 class="font-medium text-gray-700">
-                                    Created At
+                                    Dibuat Pada
                                 </h5>
                                 <span>{{ $permission->created_at ?? '-' }}</span>
                             </div>
 
                             <div class="mb-4">
                                 <h5 class="font-medium text-gray-700">
-                                    Updated At
+                                    Diperbarui Pada
                                 </h5>
                                 <span>{{ $permission->updated_at ?? '-' }}</span>
                             </div>

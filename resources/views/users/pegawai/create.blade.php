@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Create Pegawai
+            Buat Baru Pegawai
         </h2>
     </x-slot>
 
     <style>
-        /* Mobile-only CSS for create pegawai form (max-width: 768px) */
+        /* Mobile-only CSS for Buat Baru Pegawai form (max-width: 768px) */
         @media (max-width: 768px) {
             /* Reduce page padding on mobile */
             .py-12.bg-grey.min-h-screen { 

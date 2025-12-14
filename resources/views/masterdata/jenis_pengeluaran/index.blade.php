@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            List Jenis Pengeluaran
+            Daftar Jenis Pengeluaran
         </h2>
     </x-slot>
 
@@ -41,22 +41,22 @@
                     color: #800000; margin-bottom: 4px; font-size: 0.875rem;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
                     text-align: center !important; padding-top: 12px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] > div {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
                     display: flex !important; justify-content: center !important;
                     align-items: center !important; gap: 8px !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] button.button {
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] button.button {
                     min-width: 40px !important; height: 40px !important;
                     display: inline-flex !important; align-items: center !important;
                     justify-content: center !important;
                 }
                 
-                .block.w-full.overflow-auto tbody tr td[data-label="Action"] a.mr-1 { margin-right: 0 !important; }
+                .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] a.mr-1 { margin-right: 0 !important; }
                 .mt-10.px-4 { margin-top: 12px !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
             }
         </style>
@@ -113,7 +113,7 @@
                                         'id' => 'No',
                                         'nama_pengeluaran' => 'Nama Jenis Pengeluaran',
                                         'keterangan' => 'Keterangan',
-                                        'updated_at' => 'Updated At',
+                                        'updated_at' => 'Diperbarui Pada',
                                     ];
                                 @endphp
                                 @foreach($columns as $field => $label)
@@ -131,7 +131,7 @@
                                     </th>
                                 @endforeach
                                 <th class="px-4 py-3 text-left">
-                                    Action
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
@@ -147,10 +147,10 @@
                                 <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Keterangan">
                                     {{ $jenis_pengeluaran->keterangan ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Updated At">
+                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Diperbarui Pada">
                                     {{ $jenis_pengeluaran->updated_at ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Action">
+                                <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
                                     <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
                                         @can('update', $jenis_pengeluaran)
                                             <a href="{{ route('jenis_pengeluaran.edit', $jenis_pengeluaran) }}" class="mr-1">

@@ -46,7 +46,7 @@
                                         <button type="submit" class="button button-sm bg-green-500 hover:bg-green-600" 
                                                 onclick="return confirm('Apakah Anda yakin ingin memperbarui harga berdasarkan komponen?')">
                                             <i class="icon ion-md-refresh mr-1"></i>
-                                            Update dari Komponen
+                                            Perbarui dari Komponen
                                         </button>
                                     </form>
                                 </div>

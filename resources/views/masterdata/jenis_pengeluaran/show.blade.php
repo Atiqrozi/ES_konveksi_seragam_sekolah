@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Show Jenis Pengeluaran
+            Lihat Jenis Pengeluaran
         </h2>
     </x-slot>
 
@@ -35,14 +35,14 @@
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <h5 class="font-medium text-gray-700">
-                                    Created At
+                                    Dibuat Pada
                                 </h5>
                                 <span>{{ $jenis_pengeluaran->created_at ?? '-' }}</span>
                             </div>
 
                             <div class="mb-4">
                                 <h5 class="font-medium text-gray-700">
-                                    Updated At
+                                    Diperbarui Pada
                                 </h5>
                                 <span>{{ $jenis_pengeluaran->updated_at ?? '-' }}</span>
                             </div>

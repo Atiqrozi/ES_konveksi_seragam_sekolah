@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permission List - {{ now() }}</title>
+    <title>Daftar Izin - {{ now() }}</title>
 </head>
 <body>
     <img src="{{ public_path('images/header.png') }}" style="max-width:100%">
     
-    <h1 style="color: #800000; text-align: center; padding: 20px">Permission List - {{ now() }}</h1>
+    <h1 style="color: #800000; text-align: center; padding: 20px">Daftar Izin - {{ now() }}</h1>
 
     <table border="1" style="border-collapse: collapse; width:100%;">
         <thead style="color: #800000">
@@ -23,10 +23,10 @@
                     Role
                 </th>
                 <th style="padding: 10px; text-align: center;">
-                    Created At
+                    Dibuat Pada
                 </th>
                 <th style="padding: 10px; text-align: center;">
-                    Updated At
+                    Diperbarui Pada
                 </th>
             </tr>
         </thead>
