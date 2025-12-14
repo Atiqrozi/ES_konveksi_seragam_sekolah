@@ -57,14 +57,17 @@
             position: relative;
             color: #fff;
             text-align: center;
+            overflow: hidden;
         }
 
         .hero img {
             width: 100%;
             height: auto;
             filter: drop-shadow(0 0 10px #222);
+            display: block;
         }
 
+        /* Desktop / default: keep original desktop look (unchanged behavior) */
         .hero-text {
             position: relative;
             background-image: url("{{ asset('images/section_welcome.png') }}");
@@ -76,9 +79,11 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100vh;
+            height: 100vh; /* keep desktop behavior same as before */
             z-index: 1;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 4.19);
+            box-sizing: border-box;
+            padding: 0; /* no extra padding on desktop to preserve layout */
         }
 
         .hero-text::before {
@@ -121,6 +126,29 @@
             display: block;
         }
 
+        /* Desktop: force the two about columns to sit side-by-side even if
+           a global .container rule exists. This keeps heading above and
+           boxes next row side-by-side. */
+        @media only screen and (min-width: 992px) {
+            .about .row.equal-height {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .about .row.equal-height > .col-md-6 {
+                flex: 0 0 48%;
+                max-width: 48%;
+            }
+
+            /* ensure the inner .box fills the column */
+            .about .row.equal-height > .col-md-6 .box {
+                width: 100%;
+                margin: 0;
+            }
+        }
+
         .about {
             /* adjust top/bottom padding to position the title similar to the reference image */
             padding: 60px 0 40px 0;
@@ -137,12 +165,12 @@
             font-family: 'Amaranth', sans-serif;
             font-weight: bold;
             color: #800000;
-            margin-top: 100px;
+            margin-top: 20px; /* reduced so title sits closer to image */
         }
 
         .about .container p {
             font-family: 'Amaranth', sans-serif;
-            margin-bottom: 100px;
+            margin-bottom: 20px; /* reduced spacing under paragraphs */
             line-height: 30px;
         }
 
@@ -258,83 +286,65 @@
             font-family: 'Amaranth', sans-serif;
         }
 
+        /* Mobile-only overrides: keep desktop identical, change only for <=768px */
         @media only screen and (max-width: 768px) {
-            /* Stack nav items vertically on small screens */
+            /* On small screens ensure the about container stacks so the title sits above cards */
+            .about .container {
+                display: block;
+            }
             nav ul {
                 text-align: center;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            /* Make hero behave on small screens: reduce height, add padding and prevent overflow */
-            .hero {
-                overflow: hidden;
             }
 
             .hero .hero-text {
                 text-align: center;
-                height: 60vh; /* reduce from 100vh for better fit */
-                padding: 2rem 1rem;
-                background-position: center;
-                justify-content: center;
+                min-height: 50vh; /* shorter on mobile */
+                padding: 2.5rem 1rem; /* breathing room on small screens */
             }
 
-            /* Ensure heading and paragraph fit the viewport */
-            .hero .hero-text h1 {
-                width: 100%;
-                font-size: 28px;
+            /* responsive smaller typography on mobile */
+            .hero-text h1 {
+                font-size: clamp(22px, 7.5vw, 34px);
                 line-height: 1.05;
-                margin: 0.2rem 0;
-                text-wrap: balance;
+                margin: 0;
             }
 
-            .hero .hero-text p {
-                width: 100%;
-                font-size: 14px;
-                margin: 0.4rem 0 0 0;
+            .hero-text p {
+                font-size: clamp(13px, 3.5vw, 16px);
+                margin-top: 0.5rem;
             }
 
-            /* Make the hero background image responsive */
-            .hero img {
-                height: auto;
-                width: 100%;
-                display: block;
-            }
-
-            /* About section: simpler spacing for stacked layout */
+            /* Make about section stack vertically and remove desktop-only absolute positioning */
             .about .row .col-md-6 {
-                text-align: center !important;
-                margin-bottom: 20px;
-            }
-
-            .about .row .image_1 h2,
-            .about .row .image_2 h2 {
-                margin-top: 20px;
-            }
-
-            .about .row .image_1 p,
-            .about .row .image_2 p {
-                margin-bottom: 0;
-            }
-
-            /* reset absolute positioning on small screens to avoid overflow */
-            .about .row .image_2 img {
-                position: static;
-                bottom: auto;
-                left: auto;
+                text-align: left !important;
+                width: 100%;
                 display: block;
-                margin: 0 auto;
-                max-width: 100%;
+                padding: 0 0.25rem;
+            }
+
+            .about .row .image_1 h2 { margin-top: 20px; }
+            .about .row .image_1 p { margin-bottom: 0; }
+
+            .about .row .image_2 h2 { margin-top: 20px; }
+            .about .row .image_2 p { margin-bottom: 0; }
+
+            /* Reset absolute positioning so images flow naturally on small screens */
+            .about .row .image_2 img,
+            .about .row .image_1 img {
+                position: relative !important;
+                left: auto !important;
+                bottom: auto !important;
+                max-width: 100% !important;
+                height: auto !important;
+                margin: 0 0 1rem 0 !important;
             }
 
             .kontak button {
-                margin-bottom: 30px;
+                margin-bottom: 50px;
             }
 
             .kontak .container {
                 justify-content: center;
-                padding: 0 1rem;
             }
 
             .p_rekomendasi_produk {
@@ -655,13 +665,20 @@
         }
 
         /* === Agar tinggi kedua box sama === */
-        .equal-height {
-        display: flex;
-        flex-wrap: wrap;
-        }
+    .equal-height {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* small gap between cards so they don't look stacked */
+    }
 
         .equal-height .col-md-6 {
         display: flex;
+        }
+
+        /* Add small horizontal/vertical gutters for the about cards */
+        .about .row.equal-height > .col-md-6 {
+            padding: 0.5rem; /* gentle spacing so boxes don't touch */
+            box-sizing: border-box;
         }
 
         .equal-height > [class*='col-'] {
@@ -688,7 +705,6 @@
     flex-direction: column;
     justify-content: space-between; /* biar isi sejajar */
     height: 100%; /* biar semua kolom sama tinggi */
-    overflow: hidden; /* prevents inner scrollbars from pseudo-elements or content */
     }
 
         .box:hover {
@@ -713,22 +729,19 @@
         display: block;
         position: absolute;
         z-index: -2;
-        /* keep pseudo-elements inset inside the .box to avoid overflow */
         top: 0.75rem;
         left: 0.75rem;
-        right: 0.75rem;
-        bottom: 0.75rem;
-        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
         background-size: var(--bgsize, 0.28rem) var(--bgsize, 0.28rem);
         }
 
-    .box::before {
-    /* inner white background that sits flush with the box */
-    inset: 0;
-    box-sizing: border-box;
-    background: white;
-    z-index: -1;
-    }
+        .box::before {
+        top: 0;
+        left: 0;
+        background: white;
+        z-index: -1;
+        }
 
         /* === Gambar === */
     .box img {
@@ -760,38 +773,6 @@
     margin: 0 0 0.15rem 0;
     padding: 0;
     }
-
-    /* === FIX agar tampilan tidak bisa digeser (horizontal scroll) === */
-html, body {
-    overflow-x: hidden !important; /* cegah geser horizontal */
-    width: 100%;
-    max-width: 100%;
-}
-
-/* pastikan semua elemen tidak keluar dari viewport */
-* {
-    box-sizing: border-box;
-}
-
-/* kadang ada container bootstrap yang melebihi layar — ini mencegahnya */
-.container,
-.row,
-.col-md-6,
-.card-list,
-.hero,
-.about,
-.kontak {
-    overflow-x: hidden;
-}
-
-/* kalau masih bisa geser di mobile, tambahkan juga ini */
-@media (max-width: 768px) {
-    body {
-        position: relative;
-        overflow-x: hidden !important;
-    }
-}
-
 
     </style>
 </head>

@@ -147,12 +147,13 @@ class PesananController extends Controller
     {
         // Debug authorization
         $user = Auth::user();
-        Log::info('User attempting to create invoice:', [
-            'user_id' => $user->id,
-            'user_name' => $user->nama,
-            'roles' => $user->roles->pluck('name'),
-            'has_permission' => $user->hasPermissionTo('create pesanan')
-        ]);
+        if ($user) {
+            Log::info('User attempting to create invoice:', [
+                'user_id' => $user->id,
+                'user_name' => $user->nama,
+                'roles' => $user->roles->pluck('name')
+            ]);
+        }
         
         $this->authorize('create', Invoice::class);
 
@@ -322,19 +323,30 @@ class PesananController extends Controller
             if (auth()->user()->roles->contains('name', 'Sales')) {
                 $invoices = Invoice::where('customer_id', Auth::user()->id)
                     ->with(['user', 'pesanans.produk'])
+                    ->orderBy('created_at', 'desc')
                     ->get();
             } else {
-                $invoices = Invoice::with(['user', 'pesanans.produk'])->get();
+                $invoices = Invoice::with(['user', 'pesanans.produk'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
             }
 
             $pdf = PDF::loadView('PDF.pesanan', compact('invoices'))
-                ->setPaper('a4', 'landscape');
+                ->setPaper('a4', 'landscape')
+                ->setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true,
+                    'defaultFont' => 'sans-serif'
+                ]);
 
-            return $pdf->download('Pesanan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+            return $pdf->download('Laporan_Pesanan_' . now()->format('d-m-Y_His') . '.pdf');
 
         } catch (\Exception $e) {
+            Log::error('Error export PDF pesanan: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat mengekspor PDF!');
+                ->with('error', 'Terjadi kesalahan saat mengekspor PDF: ' . $e->getMessage());
         }
     }
 
@@ -353,9 +365,12 @@ class PesananController extends Controller
             // Menggunakan helper function untuk generate PDF dengan memory optimization
             $pdf = createPdfWithOptions('PDF.invoice', compact('invoice', 'pesanans'));
 
-            return $pdf->download('Invoice_' . $invoice->invoice . '_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+            return $pdf->download('Invoice_' . $invoice->invoice . '_' . now()->format('d-m-Y_His') . '.pdf');
 
         } catch (\Exception $e) {
+            Log::error('Error generate invoice PDF: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat membuat PDF invoice: ' . $e->getMessage());
         }

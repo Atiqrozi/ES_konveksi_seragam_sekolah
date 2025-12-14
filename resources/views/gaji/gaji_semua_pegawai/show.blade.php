@@ -109,7 +109,7 @@
                                     Gaji Tersedia
                                 </h5>
                                 <span>{{ IDR($gaji_semua_pegawai->total_gaji_yang_bisa_diajukan) ?? '-' }}</span>
-                                <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#exampleModal" style="background-color: #800000; border:black 0; padding: ;"><i class="fa-solid fa-eye"></i></button>
+                                <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#exampleModal" style="background-color: #800000; border:black 0;"><i class="fa-solid fa-eye"></i></button>
                             </div>
                         </div>
 
