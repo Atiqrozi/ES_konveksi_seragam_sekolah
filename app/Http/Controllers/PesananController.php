@@ -362,13 +362,19 @@ class PesananController extends Controller
 
             $pesanans = $invoice->pesanans;
 
-            // Menggunakan helper function untuk generate PDF dengan ukuran 80mm (thermal receipt)
-            // Hitung panjang dinamis berdasarkan konten aktual:
-            // Header+Logo+Info: 40mm, Table header: 8mm, Per item: 6mm, Total section: 30mm, Footer: 10mm
+            // Generate PDF dengan ukuran 80mm (thermal receipt)
             $itemCount = $pesanans->count();
             $dynamicHeight = 40 + 8 + ($itemCount * 6) + 30 + 10;
             
-            $pdf = createPdfWithOptions('PDF.invoice', compact('invoice', 'pesanans'), [80, $dynamicHeight]);
+            // Load PDF dengan custom size
+            $pdf = PDF::loadView('PDF.invoice', compact('invoice', 'pesanans'))
+                ->setPaper([0, 0, 226.77, $dynamicHeight * 2.83465], 'portrait') // 80mm = 226.77 points
+                ->setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true, // Enable untuk load local images
+                    'chroot' => public_path(), // Set chroot ke public directory
+                    'defaultFont' => 'Arial',
+                ]);
 
             return $pdf->download('Invoice_' . $invoice->invoice . '_' . now()->format('d-m-Y_His') . '.pdf');
 
@@ -382,6 +388,37 @@ class PesananController extends Controller
     }
 
     // ========== PRIVATE HELPER METHODS ==========
+
+    /**
+     * Create PDF with optimized options for thermal receipt printing.
+     * 
+     * @param string $view View name
+     * @param array $data Data to pass to view
+     * @param array $paperSize Paper size in mm [width, height]
+     * @return \Barryvdh\DomPDF\PDF
+     */
+    private function createPdfWithOptions($view, $data, $paperSize = [80, 297])
+    {
+        // Set memory limit untuk PDF generation
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', '300');
+        
+        // Load view dan set paper size custom
+        $pdf = PDF::loadView($view, $data)->setPaper($paperSize, 'portrait');
+        
+        // Set options untuk optimize PDF
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => false,
+            'chroot' => public_path(),
+            'dpi' => 96,
+            'defaultFont' => 'Arial',
+            'isFontSubsettingEnabled' => true,
+            'isPhpEnabled' => false,
+        ]);
+        
+        return $pdf;
+    }
 
     /**
      * Create new invoice with auto-generated invoice number.

@@ -82,9 +82,15 @@
     @endphp
     
     <div class="header">
-        @if(file_exists(public_path('favicon.png')))
-        <img src="{{ public_path('favicon.png') }}" alt="Logo">
+        @php
+            $logoPath = public_path('favicon.png');
+            $logoExists = file_exists($logoPath);
+        @endphp
+        
+        @if($logoExists)
+            <img src="{{ $logoPath }}" alt="Logo" style="max-width: 50px; height: auto; margin-bottom: 5px;">
         @endif
+        
         <div style="font-weight:bold; font-size:11px; margin-top:3px;">INVOICE</div>
         <div style="font-size:8px;">{{ $invoice->invoice ?? 'N/A' }}</div>
         <div style="font-size:7px;">{{ date('d/m/Y H:i', strtotime($invoice->created_at ?? now())) }}</div>
