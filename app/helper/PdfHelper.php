@@ -42,13 +42,23 @@ if (!function_exists('createPdfWithOptions')) {
      * 
      * @param string $view
      * @param array $data
-     * @param string $paper Default 'a4'
+     * @param string|array $paper Default 'a4', bisa custom array [width, height] dalam mm
      * @param string $orientation Default 'portrait'
      * @return \Barryvdh\DomPDF\PDF
      */
     function createPdfWithOptions($view, $data, $paper = 'a4', $orientation = 'portrait')
     {
         setPdfMemoryLimit();
+        
+        // Convert mm to points (1mm = 2.83465 points)
+        if (is_array($paper)) {
+            $paper = [
+                0,
+                0,
+                $paper[0] * 2.83465, // width in points
+                $paper[1] * 2.83465  // height in points
+            ];
+        }
         
         $pdf = PDF::loadView($view, $data)->setPaper($paper, $orientation);
         

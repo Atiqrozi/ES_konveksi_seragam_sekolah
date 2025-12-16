@@ -362,8 +362,13 @@ class PesananController extends Controller
 
             $pesanans = $invoice->pesanans;
 
-            // Menggunakan helper function untuk generate PDF dengan memory optimization
-            $pdf = createPdfWithOptions('PDF.invoice', compact('invoice', 'pesanans'));
+            // Menggunakan helper function untuk generate PDF dengan ukuran 80mm (thermal receipt)
+            // Hitung panjang dinamis berdasarkan konten aktual:
+            // Header+Logo+Info: 40mm, Table header: 8mm, Per item: 6mm, Total section: 30mm, Footer: 10mm
+            $itemCount = $pesanans->count();
+            $dynamicHeight = 40 + 8 + ($itemCount * 6) + 30 + 10;
+            
+            $pdf = createPdfWithOptions('PDF.invoice', compact('invoice', 'pesanans'), [80, $dynamicHeight]);
 
             return $pdf->download('Invoice_' . $invoice->invoice . '_' . now()->format('d-m-Y_His') . '.pdf');
 
