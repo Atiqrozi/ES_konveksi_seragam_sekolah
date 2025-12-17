@@ -89,8 +89,8 @@
                                 </div>
                                 
                                 <div id="komponen-container">
-                                    <div class="komponen-row flex flex-wrap items-end gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                                        <div class="flex-1 min-w-0">
+                                    <div class="komponen-row komponen-responsive flex flex-wrap items-end gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                                        <div class="komponen-field flex-1 min-w-0">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                                 Komponen
                                             </label>
@@ -113,7 +113,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="w-32">
+                                        <div class="quantity-field w-32">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                                 Quantity
                                             </label>
@@ -127,7 +127,7 @@
                                                 onchange="updateTotal()"
                                             >
                                         </div>
-                                        <div class="w-32">
+                                        <div class="subtotal-field w-32">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                                 Subtotal
                                             </label>
@@ -138,7 +138,7 @@
                                                 placeholder="Rp 0"
                                             >
                                         </div>
-                                        <div class="w-20">
+                                        <div class="delete-field w-20">
                                             <button 
                                                 type="button" 
                                                 class="remove-komponen bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded"
@@ -369,6 +369,66 @@
             color: #1e40af !important;
             font-weight: 600 !important;
         }
+
+        /* Mobile Responsive Layout untuk Komponen Row */
+        @media (max-width: 768px) {
+            .komponen-responsive {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            .komponen-responsive .komponen-field {
+                width: 100% !important;
+                order: 1;
+            }
+
+            .komponen-responsive .quantity-field {
+                width: 100% !important;
+                order: 2;
+            }
+
+            .komponen-responsive .subtotal-field {
+                width: 100% !important;
+                order: 3;
+            }
+
+            .komponen-responsive .delete-field {
+                width: 100% !important;
+                order: 4;
+                text-align: center;
+            }
+
+            .komponen-responsive .delete-field button {
+                width: 100%;
+            }
+        }
+
+        /* Desktop Layout - Keep horizontal */
+        @media (min-width: 769px) {
+            .komponen-responsive {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: flex-end !important;
+            }
+
+            .komponen-responsive .komponen-field {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+
+            .komponen-responsive .quantity-field {
+                width: 128px !important;
+            }
+
+            .komponen-responsive .subtotal-field {
+                width: 128px !important;
+            }
+
+            .komponen-responsive .delete-field {
+                width: 80px !important;
+            }
+        }
     </style>
     
     <!-- Data untuk JavaScript -->
@@ -382,6 +442,11 @@
             const container = document.getElementById('komponen-container');
             const firstRow = container.querySelector('.komponen-row');
             const newRow = firstRow.cloneNode(true);
+            
+            // Ensure responsive class is present
+            if (!newRow.classList.contains('komponen-responsive')) {
+                newRow.classList.add('komponen-responsive');
+            }
             
             // Reset values
             newRow.querySelector('.komponen-select').value = '';

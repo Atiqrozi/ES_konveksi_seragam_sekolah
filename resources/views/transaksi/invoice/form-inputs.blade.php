@@ -31,6 +31,85 @@
         margin-bottom: 10px;
         font-weight: bold;
     }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        /* Stack customer name and tipe harga vertically on mobile */
+        div[style*="display: flex; width: 100%"] {
+            flex-direction: column !important;
+        }
+
+        div[style*="display: flex; width: 100%"] .w-1\/2 {
+            width: 100% !important;
+            margin-bottom: 15px;
+        }
+
+        /* Hide desktop table header on mobile */
+        .produk-group-header {
+            display: none !important;
+        }
+
+        /* Mobile card-style layout for products */
+        .produk-group {
+            display: block !important;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px !important;
+            padding: 12px !important;
+            border-radius: 8px;
+            background-color: #f9fafb;
+        }
+
+        /* All input groups inside produk-group */
+        .produk-group > * {
+            width: 100% !important;
+            padding: 8px 0 !important;
+            margin-bottom: 8px;
+        }
+
+        /* Show data-label as label on mobile */
+        .produk-group > *[data-label]:not([data-label=""])::before {
+            content: attr(data-label);
+            display: block;
+            font-weight: 600;
+            color: #800000;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        /* Make delete button full width on mobile */
+        .delete-produk {
+            width: 100% !important;
+            padding: 12px !important;
+            margin-top: 4px;
+        }
+
+        /* Subtotal section responsive */
+        div[style*="justify-content: space-between"] {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        .tambah-produk-button {
+            width: 100% !important;
+            margin-bottom: 15px !important;
+        }
+
+        div[style*="display: flex; align-items: center"]:has(#subtotal) {
+            width: 100% !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        div[style*="display: flex; align-items: center"]:has(#subtotal) label {
+            width: 100% !important;
+            margin-bottom: 8px;
+            text-align: left !important;
+        }
+
+        #subtotal {
+            width: 100% !important;
+        }
+    }
 </style>
 
 <div class="flex flex-wrap">
@@ -74,12 +153,12 @@
             <div class="produk-group" style="display: flex; flex-wrap: wrap; align-items: center;">
 
                 <!-- No -->
-                <x-inputs.group style="width: 55px; padding: 5px 10px !important;">
+                <x-inputs.group style="width: 55px; padding: 5px 10px !important;" data-label="No.">
                     <span class="produk-number">1</span>
                 </x-inputs.group>
 
                 <!-- Pilih Produk -->
-                <x-inputs.group style="width: 275px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 275px; padding: 0 10px !important;" data-label="Produk">
                     <x-inputs.select name="produk_id[]" class="produk-select" required onchange="populateUkuran(this)">
                         <option disabled selected>Pilih Produk</option>
                         @foreach($produks as $value => $label)
@@ -92,29 +171,29 @@
                 </x-inputs.group>
 
                 <!-- Pilih Ukuran -->
-                <x-inputs.group style="width: 175px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 175px; padding: 0 10px !important;" data-label="Ukuran">
                     <x-inputs.select name="ukuran[]" class="ukuran-select" required onchange="populateHarga(this)">
                         <option disabled selected>Ukuran</option>
                     </x-inputs.select>
                 </x-inputs.group>
 
                 <!-- Harga -->
-                <x-inputs.group style="width: 175px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 175px; padding: 0 10px !important;" data-label="Harga">
                     <x-inputs.basic name="harga[]" class="harga-input" required readonly placeholder="Pilih ukuran dan tipe harga"></x-inputs.basic>
                 </x-inputs.group>
 
                 <!-- Jumlah Pesanan -->
-                <x-inputs.group style="width: 175px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 175px; padding: 0 10px !important;" data-label="Jumlah Pesanan">
                     <x-inputs.basic type="number" name="jumlah_pesanan[]" min="0" placeholder="Jumlah Pesanan" oninput="calculateTotal(this)"></x-inputs.basic>
                 </x-inputs.group>
 
                 <!-- Total -->
-                <x-inputs.group style="width: 175px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 175px; padding: 0 10px !important;" data-label="Total">
                     <x-inputs.basic type="text" name="total[]" placeholder="Total" readonly></x-inputs.basic>
                 </x-inputs.group>
 
                 <!-- Delete Button -->
-                <x-inputs.group style="width: 50px; padding: 0 10px !important;">
+                <x-inputs.group style="width: 50px; padding: 0 10px !important;" data-label="">
                     <button type="button" class="delete-produk" onclick="deleteProduk(this)" style="padding: 7px 15px; background-color:rgb(221, 221, 221); border-radius: 5px;">
                         <i class="icon ion-md-trash text-red-600"></i>
                     </button>

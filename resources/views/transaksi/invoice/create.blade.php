@@ -5,6 +5,38 @@
         </h2>
     </x-slot>
 
+    <style>
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .py-12 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+
+            .mt-10 {
+                margin-top: 2rem !important;
+            }
+
+            /* Make buttons stack vertically on mobile */
+            .mt-10 {
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 12px;
+            }
+
+            .mt-10 .button {
+                width: 100%;
+                text-align: center;
+                padding: 12px;
+                float: none !important;
+            }
+
+            .mt-10 .button.float-right {
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+
     <div class="bg">
         <div class="py-12 bg-grey min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
