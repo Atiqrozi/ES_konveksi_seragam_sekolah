@@ -186,8 +186,8 @@ class PesananController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('invoice.index')
-                ->with('success', 'Invoice berhasil dibuat!');
+                ->route('invoice.edit', $invoice)
+                ->with('success', 'Invoice berhasil dibuat! Silakan lakukan pembayaran.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -496,7 +496,9 @@ class PesananController extends Controller
 
         $invoice->update([
             'tagihan_total' => $user->tagihan,
-            'sub_total' => $total_subtotal
+            'sub_total' => $total_subtotal,
+            'jumlah_bayar' => 0,
+            'tagihan_sisa' => $user->tagihan
         ]);
     }
 
