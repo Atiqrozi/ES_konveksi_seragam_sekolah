@@ -343,6 +343,20 @@
                                                 </form>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Print Button -->
+                                        <div class="row mt-3">
+                                            <div class="col-12 text-center">
+                                                <a href="{{ route('pesanan.invoice_print', $invoice->id) }}" 
+                                                   target="_blank"
+                                                   class="button"
+                                                   style="background-color: #1e7e34; color: white; padding: 12px 40px; text-decoration: none; display: inline-block; transition: background-color 0.3s;" 
+                                                   onmouseover="this.style.backgroundColor='#155724';" 
+                                                   onmouseout="this.style.backgroundColor='#1e7e34';">
+                                                    <i class="fa fa-print"></i> Print Invoice
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -90,4 +90,49 @@ class GajiSemuaPegawaiController extends Controller
 
         return $pdf->download('Gaji Semua Pegawai - ' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
+
+    /**
+     * Export slip gaji individual pegawai dalam format 80mm
+     */
+    public function export_slip_gaji($id)
+    {
+        try {
+            $gaji_pegawai = GajiPegawai::with('user')->findOrFail($id);
+            
+            $this->authorize('view', $gaji_pegawai);
+
+            // Get detail gaji per pekerjaan
+            $detail_gaji_pegawais = DB::table('kegiatans')
+                ->join('pekerjaans', 'kegiatans.pekerjaan_id', '=', 'pekerjaans.id')
+                ->select(
+                    'pekerjaans.id', 
+                    'pekerjaans.nama_pekerjaan', 
+                    'pekerjaans.gaji_per_pekerjaan', 
+                    DB::raw('SUM(kegiatans.jumlah_kegiatan) as total_jumlah_kegiatan'), 
+                    DB::raw('SUM(kegiatans.jumlah_kegiatan * CAST(pekerjaans.gaji_per_pekerjaan AS DECIMAL(10, 2))) as total_gaji_per_pekerjaan')
+                )
+                ->where('kegiatans.user_id', $gaji_pegawai->pegawai_id)
+                ->where('kegiatans.status_kegiatan', 'Belum Ditarik')
+                ->whereBetween('kegiatans.kegiatan_dibuat', [$gaji_pegawai->terhitung_tanggal, now()])   
+                ->groupBy('pekerjaans.id', 'pekerjaans.nama_pekerjaan', 'pekerjaans.gaji_per_pekerjaan')
+                ->get();
+
+            // Hitung panjang dinamis berdasarkan jumlah detail pekerjaan (lebih presisi)
+            // Header+Logo: 18mm, Info: 10mm, Table header: 5mm, Per item: 4mm, Total: 12mm, TTD: 20mm, Footer: 5mm
+            $itemCount = $detail_gaji_pegawais->count();
+            $dynamicHeight = 18 + 10 + 5 + ($itemCount * 4) + 12 + 20 + 5;
+            
+            $pdf = createPdfWithOptions(
+                'PDF.slip_gaji', 
+                compact('gaji_pegawai', 'detail_gaji_pegawais'),
+                [80, $dynamicHeight]
+            );
+
+            return $pdf->download('Slip_Gaji_' . $gaji_pegawai->user->nama . '_' . now()->format('d-m-Y_His') . '.pdf');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat membuat slip gaji: ' . $e->getMessage());
+        }
+    }
 }

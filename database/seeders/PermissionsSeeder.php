@@ -97,6 +97,8 @@ class PermissionsSeeder extends Seeder
                 'list riwayat stok produk',
                 'view riwayat stok produk',
                 'create riwayat stok produk',
+                'update riwayat stok produk',
+                'delete riwayat stok produk',
             ],
             'pesanan' => [
                 'list pesanan',

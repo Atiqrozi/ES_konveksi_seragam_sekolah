@@ -36,6 +36,45 @@
 
     <div class="py-12 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Dashboard Statistik -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-arrow-down text-green-500 text-3xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Total Stok Masuk</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ number_format($total_stok_masuk ?? 0) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-arrow-up text-red-500 text-3xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Total Stok Keluar</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ number_format($total_stok_keluar ?? 0) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-list text-blue-500 text-3xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Total Transaksi</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ number_format($total_transaksi ?? 0) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <x-partials.card> 
                 <div class="mb-5 mt-4">
                     <div class="flex flex-wrap justify-between">
@@ -66,6 +105,15 @@
                                         :value="$end_date ?? ''">
                                     </x-inputs.basic>
                                 </div>
+
+                                <div class="flex items-center w-1/2 mt-2">
+                                    <x-inputs.select name="tipe_transaksi" id="tipe_transaksi" class="form-select">
+                                        <option value="">Semua Transaksi</option>
+                                        <option value="masuk" {{ request('tipe_transaksi') == 'masuk' ? 'selected' : '' }}>Stok Masuk</option>
+                                        <option value="keluar" {{ request('tipe_transaksi') == 'keluar' ? 'selected' : '' }}>Stok Keluar</option>
+                                    </x-inputs.select>
+                                </div>
+
                                 <div class="flex items-center w-1/2 mt-2">
                                     @if ($errors->has('end_date'))
                                         <div class="alert alert-danger">
@@ -111,16 +159,16 @@
                     </div>
                 </div>
 
-                <div class="block w-full overflow-auto scrolling-touch">
-                    <table class="w-full max-w-full mb-4 bg-transparent">
+                <div class="block w-full">
+                    <table class="w-full mb-4 bg-transparent">
                         <thead style="color: #800000">
                             <tr>
                                 @php
                                     $columns = [
                                         'id' => 'No',
-                                        'nama_produk' => 'Nama Produk',
-                                        'ukuran_produk' => 'Ukuran Produk',
-                                        'stok_masuk' => 'Stok Masuk',
+                                        'nama_produk' => 'Produk',
+                                        'ukuran_produk' => 'Ukuran',
+                                        'tipe_transaksi' => 'Tipe',
                                         'catatan' => 'Catatan',
                                         'created_at' => 'Tanggal',
                                     ];
@@ -139,7 +187,10 @@
                                         </a>
                                     </th>
                                 @endforeach
-                                <th class="px-4 py-3 text-left">
+                                <th class="px-4 py-3 text-center">
+                                    Kuantiti
+                                </th>
+                                <th class="px-4 py-3 text-center" style="min-width: 120px;">
                                     Aksi
                                 </th>
                             </tr>
@@ -147,39 +198,60 @@
                         <tbody class="text-gray-600">
                             @forelse($riwayat_stok_produks as $key => $riwayat_stok_produk)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="No">
+                                <td class="px-4 py-3 text-left" data-label="No" style="white-space: nowrap;">
                                     {{ $riwayat_stok_produks->firstItem() + $key }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Nama Produk">
+                                <td class="px-4 py-3 text-left" data-label="Nama Produk">
                                     {{ optional($riwayat_stok_produk->produk)->nama_produk ?? '-'}}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Ukuran Produk">
+                                <td class="px-4 py-3 text-left" data-label="Ukuran" style="white-space: nowrap;">
                                     {{ $riwayat_stok_produk->ukuran_produk ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Stok Masuk">
-                                    {{ $riwayat_stok_produk->stok_masuk ?? '-' }}
+                                <td class="px-4 py-3 text-left" data-label="Tipe" style="white-space: nowrap;">
+                                    @if($riwayat_stok_produk->tipe_transaksi == 'masuk')
+                                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">
+                                            <i class="fas fa-arrow-down"></i> Masuk
+                                        </span>
+                                    @else
+                                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">
+                                            <i class="fas fa-arrow-up"></i> Keluar
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Catatan">
+                                <td class="px-4 py-3 text-left" data-label="Catatan" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">
                                     {{ $riwayat_stok_produk->catatan ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-left" style="max-width: 400px" data-label="Tanggal">
+                                <td class="px-4 py-3 text-left" data-label="Tanggal" style="white-space: nowrap;">
                                     {{ $riwayat_stok_produk->updated_at ?? '-' }}
                                 </td>
+                                <td class="px-4 py-3 text-center" data-label="Kuantiti" style="white-space: nowrap;">
+                                    {{ $riwayat_stok_produk->tipe_transaksi == 'masuk' ? $riwayat_stok_produk->stok_masuk : $riwayat_stok_produk->stok_keluar }}
+                                </td>
                                 <td class="px-4 py-3 text-center" style="width: 134px;" data-label="Aksi">
-                                    <div role="group" aria-label="Row Actions" class=" relative inline-flex align-middle">
+                                    <div role="group" aria-label="Row Actions" class="relative inline-flex align-middle">
                                         @can('view', $riwayat_stok_produk)
                                             <a href="{{ route('riwayat_stok_produk.show', $riwayat_stok_produk) }}" class="mr-1">
                                                 <button type="button" class="button">
                                                     <i class="icon ion-md-eye"></i>
                                                 </button>
                                             </a>
-                                        @endcan 
+                                        @endcan
+                                        
+                                        @if($riwayat_stok_produk->tipe_transaksi == 'masuk')
+                                            @can('update', $riwayat_stok_produk)
+                                                <a href="{{ route('riwayat_stok_produk.edit', $riwayat_stok_produk) }}">
+                                                    <button type="button" class="button">
+                                                        <i class="icon ion-md-create"></i>
+                                                    </button>
+                                                </a>
+                                            @endcan
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" style="display: table-cell; text-align: center; vertical-align: middle;">
+                                <td colspan="8" style="display: table-cell; text-align: center; vertical-align: middle;">
                                     No Riwayat Stok Produk Found
                                 </td>
                             </tr>

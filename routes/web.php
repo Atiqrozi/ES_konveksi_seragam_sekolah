@@ -102,6 +102,7 @@ Route::prefix('/')
         Route::get('/pesanan/export_excel', [PesananController::class, 'export_excel'])->name('pesanan.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list pesanan']);
         Route::get('/pesanan/export_pdf', [PesananController::class, 'export_pdf'])->name('pesanan.export_pdf')->middleware(['auth', 'verified', 'role_or_permission:list pesanan']);
         Route::get('/pesanan/invoice_pdf/{invoice_id}', [PesananController::class, 'invoice_pdf'])->name('pesanan.invoice_pdf')->middleware(['auth', 'verified', 'role_or_permission:view pesanan']);
+        Route::get('/pesanan/invoice_print/{invoice_id}', [PesananController::class, 'invoice_print'])->name('pesanan.invoice_print')->middleware(['auth', 'verified', 'role_or_permission:view pesanan']);
 
         // export roles
         Route::get('/roles/export_excel', [RoleController::class, 'export_excel'])->name('roles.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list roles']);
@@ -126,10 +127,13 @@ Route::prefix('/')
         // export gaji semua pegawai
         Route::get('/gaji_semua_pegawai/export_excel', [GajiSemuaPegawaiController::class, 'export_excel'])->name('gaji_semua_pegawai.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list gaji semua pegawai']);
         Route::get('/gaji_semua_pegawai/export_pdf', [GajiSemuaPegawaiController::class, 'export_pdf'])->name('gaji_semua_pegawai.export_pdf')->middleware(['auth', 'verified', 'role_or_permission:list gaji semua pegawai']);
+        Route::get('/gaji_semua_pegawai/{id}/slip_gaji', [GajiSemuaPegawaiController::class, 'export_slip_gaji'])->name('gaji_semua_pegawai.slip_gaji')->middleware(['auth', 'verified', 'role_or_permission:view gaji semua pegawai']);
 
         // export pengajuan penarikan gaji
         Route::get('/pengajuan_penarikan_gaji/export_excel', [PengajuanPenarikanGajiController::class, 'export_excel'])->name('pengajuan_penarikan_gaji.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list pengajuan penarikan gaji']);
         Route::get('/pengajuan_penarikan_gaji/export_pdf', [PengajuanPenarikanGajiController::class, 'export_pdf'])->name('pengajuan_penarikan_gaji.export_pdf')->middleware(['auth', 'verified', 'role_or_permission:list pengajuan penarikan gaji']);
+        Route::get('/pengajuan_penarikan_gaji/{id}/export_slip_gaji', [PengajuanPenarikanGajiController::class, 'export_slip_gaji'])->name('pengajuan_penarikan_gaji.export_slip_gaji')->middleware(['auth', 'verified', 'role_or_permission:list pengajuan penarikan gaji']);
+        Route::get('/pengajuan_penarikan_gaji/{id}/print_slip_gaji', [PengajuanPenarikanGajiController::class, 'print_slip_gaji'])->name('pengajuan_penarikan_gaji.print_slip_gaji')->middleware(['auth', 'verified', 'role_or_permission:list pengajuan penarikan gaji']);
 
         // export riwayat penarikan gaji
         Route::get('/riwayat_penarikan_gaji/export_excel', [RiwayatPenarikanGajiController::class, 'export_excel'])->name('riwayat_penarikan_gaji.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list riwayat semua ajuan']);

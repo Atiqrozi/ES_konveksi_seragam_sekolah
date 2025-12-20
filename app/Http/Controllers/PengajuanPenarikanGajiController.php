@@ -158,4 +158,82 @@ class PengajuanPenarikanGajiController extends Controller
 
         return $pdf->download('Pengajuan Penarikan Gaji ( ' . Auth::user()->nama . ' ) - ' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
+
+    public function export_slip_gaji($id)
+    {
+        $this->authorize('view', PenarikanGaji::findOrFail($id));
+        
+        $penarikan_gaji = PenarikanGaji::findOrFail($id);
+        
+        // Pastikan pegawai hanya bisa download slip gaji mereka sendiri
+        if ($penarikan_gaji->pegawai_id != Auth::user()->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $detail_gaji_pegawais = DB::table('kegiatans')
+            ->join('pekerjaans', 'kegiatans.pekerjaan_id', '=', 'pekerjaans.id')
+            ->select(
+                'pekerjaans.id', 
+                'pekerjaans.nama_pekerjaan', 
+                'pekerjaans.gaji_per_pekerjaan', 
+                DB::raw('SUM(kegiatans.jumlah_kegiatan) as total_jumlah_kegiatan'), 
+                DB::raw('SUM(kegiatans.jumlah_kegiatan * CAST(pekerjaans.gaji_per_pekerjaan AS DECIMAL(10, 2))) as total_gaji_per_pekerjaan')
+            )
+            ->where('kegiatans.user_id', $penarikan_gaji->pegawai_id)
+            ->whereBetween('kegiatans.kegiatan_dibuat', [$penarikan_gaji->mulai_tanggal, $penarikan_gaji->akhir_tanggal])   
+            ->groupBy('pekerjaans.id', 'pekerjaans.nama_pekerjaan', 'pekerjaans.gaji_per_pekerjaan')
+            ->get();  
+
+        // Hitung tinggi dinamis berdasarkan jumlah item
+        $itemCount = count($detail_gaji_pegawais);
+        $baseHeight = 18; // Header toko
+        $employeeInfoHeight = 10; // Info pegawai
+        $tableHeaderHeight = 5; // Header tabel
+        $itemHeight = 4; // Tinggi per item
+        $totalHeight = 12; // Total dan footer
+        $signatureHeight = 20; // Tanda tangan
+        $bottomMargin = 5; // Margin bawah
+
+        $dynamicHeight = $baseHeight + $employeeInfoHeight + $tableHeaderHeight + ($itemCount * $itemHeight) + $totalHeight + $signatureHeight + $bottomMargin;
+
+        $pdf = createPdfWithOptions(
+            'PDF.slip_gaji',
+            compact('penarikan_gaji', 'detail_gaji_pegawais'),
+            [80, $dynamicHeight], // width 80mm, height dinamis
+            'portrait'
+        );
+
+        return $pdf->download('Slip Gaji - ' . $penarikan_gaji->user->nama . ' - ' . now()->format('Y-m-d_H-i-s') . '.pdf');
+    }
+
+    /**
+     * Display slip gaji print preview
+     */
+    public function print_slip_gaji($id): View
+    {
+        $this->authorize('view', PenarikanGaji::findOrFail($id));
+        
+        $penarikan_gaji = PenarikanGaji::findOrFail($id);
+        
+        // Pastikan pegawai hanya bisa print slip gaji mereka sendiri
+        if ($penarikan_gaji->pegawai_id != Auth::user()->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $detail_gaji_pegawais = DB::table('kegiatans')
+            ->join('pekerjaans', 'kegiatans.pekerjaan_id', '=', 'pekerjaans.id')
+            ->select(
+                'pekerjaans.id', 
+                'pekerjaans.nama_pekerjaan', 
+                'pekerjaans.gaji_per_pekerjaan', 
+                DB::raw('SUM(kegiatans.jumlah_kegiatan) as total_jumlah_kegiatan'), 
+                DB::raw('SUM(kegiatans.jumlah_kegiatan * CAST(pekerjaans.gaji_per_pekerjaan AS DECIMAL(10, 2))) as total_gaji_per_pekerjaan')
+            )
+            ->where('kegiatans.user_id', $penarikan_gaji->pegawai_id)
+            ->whereBetween('kegiatans.kegiatan_dibuat', [$penarikan_gaji->mulai_tanggal, $penarikan_gaji->akhir_tanggal])   
+            ->groupBy('pekerjaans.id', 'pekerjaans.nama_pekerjaan', 'pekerjaans.gaji_per_pekerjaan')
+            ->get();
+
+        return view('print.slip_gaji', compact('penarikan_gaji', 'detail_gaji_pegawais'));
+    }
 }

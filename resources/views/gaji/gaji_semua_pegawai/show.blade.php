@@ -179,6 +179,12 @@
                 </table>
             </div>
             <div class="modal-footer">
+                <a href="{{ route('gaji_semua_pegawai.slip_gaji', $gaji_semua_pegawai->id) }}" 
+                   class="btn btn-success" 
+                   style="background-color: #800000; border-color: #800000;">
+                    <i class="icon ion-md-download mr-1"></i>
+                    Download Slip Gaji
+                </a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>

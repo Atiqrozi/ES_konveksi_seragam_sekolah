@@ -25,6 +25,16 @@ class RiwayatStokProdukPolicy
         return $user->hasPermissionTo('create riwayat stok produk');
     }
 
+    public function update(User $user, RiwayatStokProduk $model): bool
+    {
+        return $user->hasPermissionTo('update riwayat stok produk');
+    }
+
+    public function delete(User $user, RiwayatStokProduk $model): bool
+    {
+        return $user->hasPermissionTo('delete riwayat stok produk');
+    }
+
     public function restore(User $user, RiwayatStokProduk $model): bool
     {
         return false;

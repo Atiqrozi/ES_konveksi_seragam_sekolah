@@ -39,16 +39,22 @@
         </x-inputs.select>
     </x-inputs.group>
 
-    <x-inputs.group class="w-full">
+    <x-inputs.group class="w-1/2">
         <x-inputs.label-with-asterisk label="Stok Masuk"/>
         <x-inputs.basic 
             type="number" 
             name='stok_masuk' 
+            id='stok_masuk'
             :value="old('stok_masuk', ($editing ? $riwayat_stok_produk->stok_masuk : ''))" 
             :min="0"
-            placeholder="Stok Masuk"
+            placeholder="Jumlah Stok Masuk"
+            required
         ></x-inputs.basic>
     </x-inputs.group>
+
+    <!-- Hidden field for tipe_transaksi, always set to 'masuk' -->
+    <input type="hidden" name="tipe_transaksi" value="masuk">
+    <input type="hidden" name="stok_keluar" value="0">
 
     <x-inputs.group class="w-full">
         <x-inputs.textarea
@@ -85,4 +91,12 @@
             ukuranSelect.appendChild(option);
         });
     }
+
+    // Initialize on page load - set ukuran_produk based on selected product
+    document.addEventListener('DOMContentLoaded', function() {
+        var produkSelect = document.getElementById('id_produk');
+        if (produkSelect.value) {
+            populateUkuran(produkSelect);
+        }
+    });
 </script>

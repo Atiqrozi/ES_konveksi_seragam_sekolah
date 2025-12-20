@@ -28,7 +28,13 @@
                                 <h5 class="font-medium text-gray-700">
                                     Gaji Ditarik
                                 </h5>
-                                <span>{{ IDR($pengajuan_penarikan_gaji->gaji_yang_diajukan) ?? '-' }}</span>
+                                @php
+                                    $total_gaji_real = 0;
+                                    foreach($detail_gaji_pegawais as $detail) {
+                                        $total_gaji_real += $detail->total_jumlah_kegiatan * $detail->gaji_per_pekerjaan;
+                                    }
+                                @endphp
+                                <span>{{ IDR($total_gaji_real) ?? '-' }}</span>
                                 <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#detailGajiModal" style="background-color: #800000; border:black 0; padding: ;"><i class="fa-solid fa-eye"></i></button>
                             </div>
 
@@ -107,6 +113,23 @@
                     </div>
 
                     <div class="mt-10">
+                        @if($pengajuan_penarikan_gaji->status == 'Diterima')
+                            <a href="{{ route('pengajuan_penarikan_gaji.print_slip_gaji', $pengajuan_penarikan_gaji->id) }}" 
+                               target="_blank"
+                               class="button" 
+                               style="background-color: #1e7e34; color: white; border: none; padding: 10px 20px; margin-right: 10px; text-decoration: none; display: inline-block;">
+                                <i class="fas fa-print mr-1"></i>
+                                Print Slip Gaji
+                            </a>
+                            
+                            <a href="{{ route('pengajuan_penarikan_gaji.export_slip_gaji', $pengajuan_penarikan_gaji->id) }}" 
+                               class="button" 
+                               style="background-color: #800000; color: white; border: none; padding: 10px 20px; margin-right: 10px; text-decoration: none; display: inline-block;">
+                                <i class="fas fa-download mr-1"></i>
+                                Download Slip Gaji
+                            </a>
+                        @endif
+                        
                         <a href="{{ route('pengajuan_penarikan_gaji.index') }}" class="button">
                             <i class="mr-1 icon ion-md-return-left"></i>
                             @lang('crud.common.back')
@@ -140,13 +163,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $total_gaji_calculated = 0;
+                            @endphp
                             @foreach($detail_gaji_pegawais as $key => $detail_gaji_pegawai)
+                                @php
+                                    $subtotal = $detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan;
+                                    $total_gaji_calculated += $subtotal;
+                                @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $detail_gaji_pegawai->nama_pekerjaan }}</td>
                                     <td>{{ $detail_gaji_pegawai->total_jumlah_kegiatan }}</td>
                                     <td>{{ IDR($detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
-                                    <td>{{ IDR($detail_gaji_pegawai->total_jumlah_kegiatan * $detail_gaji_pegawai->gaji_per_pekerjaan) }}</td>
+                                    <td>{{ IDR($subtotal) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -154,7 +184,7 @@
                             <tr>
                                 <th colspan="3"></th>
                                 <th style="text-align:left;">TOTAL GAJI</th>
-                                <th>{{ IDR($pengajuan_penarikan_gaji->gaji_yang_diajukan) }}</th>
+                                <th>{{ IDR($total_gaji_calculated) }}</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -7,6 +7,7 @@ use App\Models\Produk;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\UkuranProduk;
+use App\Models\RiwayatStokProduk;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -478,6 +479,17 @@ class PesananController extends Controller
             $ukuran_produk->stok -= $jumlah_pesanan;
             $ukuran_produk->save();
 
+            // Catat ke riwayat stok sebagai stok keluar
+            RiwayatStokProduk::create([
+                'id_produk' => $produk_id,
+                'ukuran_produk' => $ukuran,
+                'stok_masuk' => 0,
+                'stok_keluar' => $jumlah_pesanan,
+                'tipe_transaksi' => 'keluar',
+                'user_id' => auth()->id(),
+                'catatan' => 'Stok keluar otomatis dari pesanan #' . $invoice->invoice . ' - Customer: ' . $invoice->user->nama
+            ]);
+
             // Calculate subtotal
             $total_subtotal += $jumlah_pesanan * $harga;
         }
@@ -517,6 +529,17 @@ class PesananController extends Controller
             if ($ukuran_produk) {
                 $ukuran_produk->stok += $pesanan->jumlah_pesanan;
                 $ukuran_produk->save();
+
+                // Record stock return in history
+                RiwayatStokProduk::create([
+                    'id_produk' => $pesanan->produk_id,
+                    'ukuran_produk' => $pesanan->ukuran,
+                    'stok_masuk' => $pesanan->jumlah_pesanan,
+                    'stok_keluar' => 0,
+                    'tipe_transaksi' => 'masuk',
+                    'user_id' => auth()->id(),
+                    'catatan' => 'Pengembalian stok dari pembatalan pesanan #' . $invoice->invoice . ' (Customer: ' . $invoice->user->name . ')'
+                ]);
             }
         }
     }
@@ -537,5 +560,18 @@ class PesananController extends Controller
         // Ensure bill doesn't go negative
         $user->tagihan = max(0, $user->tagihan);
         $user->save();
+    }
+
+    /**
+     * Display invoice print preview
+     */
+    public function invoice_print($invoice_id): View
+    {
+        $invoice = Invoice::with(['user', 'pesanans.produk'])->findOrFail($invoice_id);
+        $this->authorize('view', $invoice);
+        
+        $pesanans = $invoice->pesanans;
+        
+        return view('print.invoice', compact('invoice', 'pesanans'));
     }
 }
