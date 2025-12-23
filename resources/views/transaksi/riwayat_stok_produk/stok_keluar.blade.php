@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Riwayat Stok Produk List
+            Riwayat Stok Keluar
         </h2>
     </x-slot>
 
@@ -89,16 +89,9 @@
                 font-size: 0.875rem;
             }
             
-            /* Make action buttons display inline and centered */
-            .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] {
-                text-align: center !important;
-                padding-top: 12px !important;
-            }
-            
-            .block.w-full.overflow-auto tbody tr td[data-label="Aksi"] > div {
-                display: flex !important;
-                justify-content: center !important;
-                gap: 8px !important;
+            /* Badge styling remains inline */
+            .block.w-full.overflow-auto tbody tr td span.inline-flex {
+                display: inline-flex !important;
             }
 
             /* Reduce paging footer spacing */
@@ -166,45 +159,13 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center w-1/2 mt-2">
-                                    <x-inputs.basic 
-                                        type="date" 
-                                        id="start_date" 
-                                        :name="'start_date'" 
-                                        :value="$start_date ?? ''">
-                                    </x-inputs.basic>
-
-                                    <x-inputs.basic 
-                                        type="date" 
-                                        id="end_date" 
-                                        :name="'end_date'" 
-                                        :value="$end_date ?? ''">
-                                    </x-inputs.basic>
-                                </div>
-
-                                <div class="flex items-center w-1/2 mt-2">
-                                    <x-inputs.select name="tipe_transaksi" id="tipe_transaksi" class="form-select">
-                                        <option value="">Semua Transaksi</option>
-                                        <option value="masuk" {{ request('tipe_transaksi') == 'masuk' ? 'selected' : '' }}>Stok Masuk</option>
-                                        <option value="keluar" {{ request('tipe_transaksi') == 'keluar' ? 'selected' : '' }}>Stok Keluar</option>
-                                    </x-inputs.select>
-                                </div>
-
-                                <div class="flex items-center w-1/2 mt-2">
-                                    @if ($errors->has('end_date'))
-                                        <div class="alert alert-danger">
-                                            {{ $errors->first('end_date') }}
-                                        </div>
-                                    @endif
-                                </div>
-
                                 <div class="flex items-center w-full mt-2 mb-2">
                                     <span style="color: rgb(88, 88, 88);">
                                         &nbsp; Menampilkan &nbsp;
                                     </span>
                                     <x-inputs.select name="paginate" id="paginate" class="form-select" style="width: 75px" onchange="window.location.href = this.value">
                                         @foreach([10, 25, 50, 100] as $value)
-                                            <option value="{{ route('riwayat_stok_produk.index', ['paginate' => $value, 'search' => $search]) }}" {{ $riwayat_stok_produks->perPage() == $value ? 'selected' : '' }}>
+                                            <option value="{{ route('riwayat_stok_produk.stok_keluar', ['paginate' => $value, 'search' => $search]) }}" {{ $riwayat_stok_produks->perPage() == $value ? 'selected' : '' }}>
                                                 {{ $value }}
                                             </option>
                                         @endforeach
@@ -225,12 +186,6 @@
                                 <i class="mr-1 icon ion-md-download"></i>
                                 Excel
                             </a>
-                            @can('create', App\Models\Produk::class)
-                                <a href="{{ route('riwayat_stok_produk.create') }}" class="button" style="background-color: #800000; color: white; transition: background-color 0.3s, color 0.3s;" onmouseover="this.style.backgroundColor='#700000'; this.style.color='white';" onmouseout="this.style.backgroundColor='#800000'; this.style.color='white';">
-                                    <i class="mr-1 icon ion-md-add"></i>
-                                    @lang('crud.common.create')
-                                </a>
-                            @endcan
                         </div>
                     </div>
                 </div>
@@ -244,12 +199,13 @@
                                         'id' => 'No',
                                         'nama_produk' => 'Produk',
                                         'ukuran_produk' => 'Ukuran',
-                                        'updated_at' => 'Terakhir Update',
+                                        'created_at' => 'Tanggal',
+                                        'jumlah_keluar' => 'Jumlah Keluar',
                                     ];
                                 @endphp
                                 @foreach($columns as $field => $label)
                                     <th class="px-4 py-3 text-left">
-                                        <a href="{{ route('riwayat_stok_produk.index', array_merge(request()->query(), ['sort_by' => $field, 'sort_direction' => ($sortBy === $field && $sortDirection === 'asc') ? 'desc' : 'asc'])) }}">
+                                        <a href="{{ route('riwayat_stok_produk.stok_keluar', array_merge(request()->query(), ['sort_by' => $field, 'sort_direction' => ($sortBy === $field && $sortDirection === 'asc') ? 'desc' : 'asc'])) }}">
                                             {{ $label }}
                                             @if($sortBy === $field)
                                                 @if($sortDirection === 'asc')
@@ -261,52 +217,54 @@
                                         </a>
                                     </th>
                                 @endforeach
-                                <th class="px-4 py-3 text-center">
-                                    Stok Tersedia
+                                <th class="px-4 py-3 text-left">
+                                    Catatan
+                                </th>
+                                <th class="px-4 py-3 text-left">
+                                    User
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-600">
-                            @forelse($riwayat_stok_produks as $key => $riwayat_stok_produk)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-left" data-label="No" style="white-space: nowrap;">
-                                    {{ $riwayat_stok_produks->firstItem() + $key }}
-                                </td>
-                                <td class="px-4 py-3 text-left" data-label="Nama Produk">
-                                    {{ optional($riwayat_stok_produk->produk)->nama_produk ?? '-'}}
-                                </td>
-                                <td class="px-4 py-3 text-left" data-label="Ukuran" style="white-space: nowrap;">
-                                    {{ $riwayat_stok_produk->ukuran_produk ?? '-' }}
-                                </td>
-                                <td class="px-4 py-3 text-left" data-label="Terakhir Update" style="white-space: nowrap;">
-                                    {{ $riwayat_stok_produk->updated_at ?? '-' }}
-                                </td>
-                                <td class="px-4 py-3 text-center" data-label="Stok Tersedia" style="white-space: nowrap;">
-                                    <span class="inline-block px-3 py-1 text-sm font-semibold rounded bg-blue-100 text-blue-800">
-                                        {{ $riwayat_stok_produk->stok_tersedia }}
-                                    </span>
-                                </td>
-                            </tr>
+                        <tbody class="text-gray-700">
+                            @forelse($riwayat_stok_produks as $riwayat_stok_produk)
+                                <tr class="hover-bg-gray-50">
+                                    <td data-label="No" class="px-4 py-3 text-left">
+                                        {{ ($riwayat_stok_produks->currentPage() - 1) * $riwayat_stok_produks->perPage() + $loop->iteration }}
+                                    </td>
+                                    <td data-label="Produk" class="px-4 py-3 text-left">
+                                        {{ $riwayat_stok_produk->produk->nama_produk ?? '-' }}
+                                    </td>
+                                    <td data-label="Ukuran" class="px-4 py-3 text-left">
+                                        {{ $riwayat_stok_produk->ukuran_produk }}
+                                    </td>
+                                    <td data-label="Tanggal" class="px-4 py-3 text-left">
+                                        {{ $riwayat_stok_produk->created_at->format('d M Y H:i') }}
+                                    </td>
+                                    <td data-label="Jumlah Keluar" class="px-4 py-3 text-left">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            {{ $riwayat_stok_produk->jumlah_keluar }}
+                                        </span>
+                                    </td>
+                                    <td data-label="Catatan" class="px-4 py-3 text-left">
+                                        {{ $riwayat_stok_produk->catatan ?? '-' }}
+                                    </td>
+                                    <td data-label="User" class="px-4 py-3 text-left">
+                                        {{ $riwayat_stok_produk->user->name ?? '-' }}
+                                    </td>
+                                </tr>
                             @empty
-                            <tr>
-                                <td colspan="5" style="display: table-cell; text-align: center; vertical-align: middle;">
-                                    No Riwayat Stok Produk Found
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7" class="px-4 py-3 text-center">
+                                        @lang('crud.common.no_items_found')
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="7">
-                                    <div class="mt-10 px-4">
-                                        {{ $riwayat_stok_produks->links('vendor.pagination.tailwind') }}
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
+
+                <div class="mt-10 px-4">{!! $riwayat_stok_produks->render() !!}</div>
             </x-partials.card>
         </div>
-    </div>    
+    </div>
 </x-app-layout>

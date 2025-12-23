@@ -35,12 +35,35 @@
         header {
             background-color: #252525;
             color: #fff;
-            padding: 15px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #131313;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
+            transition: all 0.3s ease-in-out;
+        }
+
+        header.scrolled {
+            background-color: rgba(139, 0, 0, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 8px 0;
+        }
+
+        header .logo {
+            transition: all 0.3s ease-in-out;
+        }
+
+        header.scrolled .logo {
+            width: 70px;
+        }
+
+        nav li {
+            transition: font-size 0.3s ease-in-out;
+        }
+
+        header.scrolled nav li {
+            font-size: 14px;
         }
 
         nav ul {
@@ -175,7 +198,7 @@
 </head>
 <body>
     <main>
-    <header class="fixed-top">
+    <header>
         <div class="container">
             <div class="logo">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo">
@@ -213,5 +236,17 @@
         &copy; {{ date('Y') }} Agung's Collection.
     </div>
 </main>
+
+<script>
+    // Sticky Header dengan Efek Shrink
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+</script>
 </body>
 </html>

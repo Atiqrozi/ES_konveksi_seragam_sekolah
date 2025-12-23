@@ -21,12 +21,39 @@
 
         header {
             color: #fff;
-            background: rgba(0,0,0,0.35); /* warna gelap semi-transparan */
             backdrop-filter: blur(1px);   /* efek blur */
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
+            transition: all 0.3s ease-in-out;
+            padding: 10px 0;
+        }
+
+        /* Header state saat scroll */
+        header.scrolled {
+            background: rgba(139, 0, 0, 0.95); /* merah solid */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 8px 0;
+        }
+
+        /* Logo transition */
+        header .logo {
+            transition: all 0.3s ease-in-out;
+        }
+
+        header.scrolled .logo {
+            width: 70px; /* logo mengecil */
+        }
+
+        /* Navbar link transition */
+        header nav li {
+            transition: font-size 0.3s ease-in-out;
+        }
+
+        header.scrolled nav li {
+            font-size: 14px; /* text sedikit mengecil */
         }
 
         nav a {
@@ -620,26 +647,107 @@
         }
 
 
+        /* WhatsApp Floating Button */
         .pesan-sekarang-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
-            z-index: 9999; /* Pastikan tombol ini berada di atas konten lainnya */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 9999;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse 2s infinite;
         }
 
-        .pesan-sekarang-btn img {
-            width: 250px;
+        .pesan-sekarang-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
+            text-decoration: none;
+        }
+
+        .pesan-sekarang-btn i {
+            font-size: 35px;
+            color: white;
+        }
+
+        /* Tooltip */
+        .pesan-sekarang-btn::before {
+            content: "Chat dengan Kami";
+            position: absolute;
+            right: 75px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Amaranth', sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Arrow tooltip */
+        .pesan-sekarang-btn::after {
+            content: "";
+            position: absolute;
+            right: 65px;
+            border: 6px solid transparent;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .pesan-sekarang-btn:hover::before,
+        .pesan-sekarang-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6), 0 0 0 10px rgba(37, 211, 102, 0.1);
+            }
+            100% {
+                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            }
         }
 
         @media only screen and (max-width: 768px) {
             .pesan-sekarang-btn {
-                bottom: 15px;
-                right: 15px;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
             }
 
-            .pesan-sekarang-btn img {
-                width: 200px;
+            .pesan-sekarang-btn i {
+                font-size: 32px;
+            }
+
+            /* Hide tooltip on mobile */
+            .pesan-sekarang-btn::before,
+            .pesan-sekarang-btn::after {
+                display: none;
             }
         }
 
@@ -778,7 +886,7 @@
 </head>
 <body>
     <main>
-    <header class="fixed-top">
+    <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="#">
@@ -1002,6 +1110,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        // Sticky Header dengan Efek Shrink
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
         // Glow follow cursor for .card
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mousemove', function(e){
@@ -1020,8 +1138,8 @@
     </script>
 
     <a class="pesan-sekarang-btn" href="https://wa.me/6281235621208?text=Halo,%20saya%20ingin%20membeli%20produk%20secara%20eceran%20di%20Agung's%20Collection.%0ANama%3A%20%5BNama%20Anda%5D%0AProduk%3A%20%5BProduk%20yang%20dibeli%5D%0AJumlah%3A%20%5BJumlah%20Produk%5D%0AAlamat%3A%20%5BAlamat%20Pengiriman%5D
-    " target="_blank">
-        <img src="{{ asset('images/pesan_sekarang.png') }}" alt="Pesan Sekarang" class="pesan_sekarang">
+    " target="_blank" title="Chat dengan Kami">
+        <i class="fab fa-whatsapp"></i>
     </a>
 </main>
 </body>

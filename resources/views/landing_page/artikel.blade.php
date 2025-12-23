@@ -25,12 +25,36 @@
 
         header {
             color: #fff;
-            background: rgba(0,0,0,0.35); /* warna gelap semi-transparan */
             backdrop-filter: blur(1px);   /* efek blur */
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
+            transition: all 0.3s ease-in-out;
+            padding: 10px 0
+        }
+
+        header.scrolled {
+            background: rgba(139, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 8px 0;
+        }
+
+        header .logo {
+            transition: all 0.3s ease-in-out;
+        }
+
+        header.scrolled .logo {
+            width: 70px;
+        }
+
+        .navbar li {
+            transition: font-size 0.3s ease-in-out;
+        }
+
+        header.scrolled .navbar li {
+            font-size: 14px;
         }
 
         .navbar a {
@@ -410,7 +434,7 @@
 </head>
 <body>
     <main>
-    <header class="fixed-top">
+    <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="#">
@@ -581,6 +605,16 @@
             window.addEventListener('resize', function() {
                 createPagination(totalPages, currentPage, baseUrl);
             });
+        });
+
+        // Sticky Header dengan Efek Shrink
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         });
     </script>  
 </body>

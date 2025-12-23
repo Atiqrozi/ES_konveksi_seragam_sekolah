@@ -8,11 +8,15 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Models\UkuranProduk;
 use App\Models\RiwayatStokProduk;
+use App\Models\StokProduk;
+use App\Models\StokKeluar;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PesananStoreRequest;
 use App\Http\Requests\PesananUpdateRequest;
 use App\Exports\Pesanan_Export_Excel;
@@ -20,8 +24,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Charts\Pesanan\PemasukanChart;
 use App\Charts\Pesanan\ProdukTerlarisChart;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class PesananController extends Controller
@@ -475,9 +477,28 @@ class PesananController extends Controller
             $pesanan->jumlah_pesanan = $jumlah_pesanan;
             $pesanan->save();
 
-            // Update stock
+            // Update stock di tabel ukuran_produk
             $ukuran_produk->stok -= $jumlah_pesanan;
             $ukuran_produk->save();
+
+            // Update stock di tabel stok_produk
+            $stok_produk = StokProduk::where('produk_id', $produk_id)
+                ->where('ukuran_produk', $ukuran)
+                ->first();
+            
+            if ($stok_produk) {
+                $stok_produk->stok_tersedia -= $jumlah_pesanan;
+                $stok_produk->save();
+            }
+
+            // Catat ke tabel stok_keluar
+            StokKeluar::create([
+                'produk_id' => $produk_id,
+                'ukuran_produk' => $ukuran,
+                'jumlah_keluar' => $jumlah_pesanan,
+                'user_id' => auth()->id(),
+                'catatan' => 'Stok keluar otomatis dari pesanan #' . $invoice->invoice . ' - Customer: ' . $invoice->user->nama
+            ]);
 
             // Catat ke riwayat stok sebagai stok keluar
             RiwayatStokProduk::create([
@@ -522,6 +543,7 @@ class PesananController extends Controller
         $pesanans = Pesanan::where('invoice_id', $invoice->id)->get();
 
         foreach ($pesanans as $pesanan) {
+            // Restore stock in ukuran_produk table
             $ukuran_produk = UkuranProduk::where('produk_id', $pesanan->produk_id)
                 ->where('ukuran', $pesanan->ukuran)
                 ->first();
@@ -529,18 +551,38 @@ class PesananController extends Controller
             if ($ukuran_produk) {
                 $ukuran_produk->stok += $pesanan->jumlah_pesanan;
                 $ukuran_produk->save();
-
-                // Record stock return in history
-                RiwayatStokProduk::create([
-                    'id_produk' => $pesanan->produk_id,
-                    'ukuran_produk' => $pesanan->ukuran,
-                    'stok_masuk' => $pesanan->jumlah_pesanan,
-                    'stok_keluar' => 0,
-                    'tipe_transaksi' => 'masuk',
-                    'user_id' => auth()->id(),
-                    'catatan' => 'Pengembalian stok dari pembatalan pesanan #' . $invoice->invoice . ' (Customer: ' . $invoice->user->name . ')'
-                ]);
             }
+
+            // Restore stock in stok_produk table
+            $stok_produk = StokProduk::where('produk_id', $pesanan->produk_id)
+                ->where('ukuran_produk', $pesanan->ukuran)
+                ->first();
+
+            if ($stok_produk) {
+                $stok_produk->stok_tersedia += $pesanan->jumlah_pesanan;
+                $stok_produk->save();
+            }
+
+            // Record stock return in stok_keluar (as negative entry or we can delete the original entry)
+            // Better approach: record as stock return
+            StokKeluar::create([
+                'produk_id' => $pesanan->produk_id,
+                'ukuran_produk' => $pesanan->ukuran,
+                'jumlah_keluar' => -$pesanan->jumlah_pesanan, // negative to indicate return
+                'user_id' => auth()->id(),
+                'catatan' => 'Pengembalian stok dari pembatalan pesanan #' . $invoice->invoice . ' (Customer: ' . $invoice->user->name . ')'
+            ]);
+
+            // Record stock return in riwayat_stok_produk
+            RiwayatStokProduk::create([
+                'id_produk' => $pesanan->produk_id,
+                'ukuran_produk' => $pesanan->ukuran,
+                'stok_masuk' => $pesanan->jumlah_pesanan,
+                'stok_keluar' => 0,
+                'tipe_transaksi' => 'masuk',
+                'user_id' => auth()->id(),
+                'catatan' => 'Pengembalian stok dari pembatalan pesanan #' . $invoice->invoice . ' (Customer: ' . $invoice->user->name . ')'
+            ]);
         }
     }
 

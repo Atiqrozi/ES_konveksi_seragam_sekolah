@@ -97,6 +97,8 @@ Route::prefix('/')
         // export riwayat stok produk
         Route::get('/riwayat_stok_produk/export_excel', [RiwayatStokProdukController::class, 'export_excel'])->name('riwayat_stok_produk.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list riwayat stok produk']);
         Route::get('/riwayat_stok_produk/export_pdf', [RiwayatStokProdukController::class, 'export_pdf'])->name('riwayat_stok_produk.export_pdf')->middleware(['auth', 'verified', 'role_or_permission:list riwayat stok produk']);
+        Route::get('/riwayat_stok_produk/history', [RiwayatStokProdukController::class, 'history'])->name('riwayat_stok_produk.history')->middleware(['auth', 'verified', 'role_or_permission:list riwayat stok produk']);
+        Route::get('/riwayat_stok_produk/stok_keluar', [RiwayatStokProdukController::class, 'stok_keluar'])->name('riwayat_stok_produk.stok_keluar')->middleware(['auth', 'verified', 'role_or_permission:list riwayat stok produk']);
 
         // export pesanan
         Route::get('/pesanan/export_excel', [PesananController::class, 'export_excel'])->name('pesanan.export_excel')->middleware(['auth', 'verified', 'role_or_permission:list pesanan']);
